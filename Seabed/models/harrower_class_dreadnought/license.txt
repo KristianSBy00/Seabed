@@ -1,0 +1,11 @@
+Model Information:
+* title:	Harrower Class Dreadnought
+* source:	https://sketchfab.com/3d-models/harrower-class-dreadnought-fc3fdf256a3841f0bc3fbe25ee31bca8
+* author:	tscftw (https://sketchfab.com/tscftw)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Harrower Class Dreadnought" (https://sketchfab.com/3d-models/harrower-class-dreadnought-fc3fdf256a3841f0bc3fbe25ee31bca8) by tscftw (https://sketchfab.com/tscftw) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
