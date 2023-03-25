@@ -7,7 +7,7 @@ BoidsController::BoidsController(double visualRange = 5.0) {
 }
 
 BoidsController::BoidsController() {
-	BoidsController::visualRange = 5.0;
+	BoidsController::visualRange = 20.0;
 }
 
 double BoidsController::fRand(double fMin, double fMax) {
@@ -16,7 +16,7 @@ double BoidsController::fRand(double fMin, double fMax) {
 }
 
 
-double BoidsController::distance(int school_id_1, int id_1, int school_id_2, int id_2, Fish fish_list[][100]) {
+double BoidsController::distance(int school_id_1, int id_1, int school_id_2, int id_2, Fish fish_list[][200]) {
 	return sqrt(
 		(fish_list[school_id_1][id_1].x - fish_list[school_id_2][id_2].x) * (fish_list[school_id_1][id_1].x - fish_list[school_id_2][id_2].x) +
 		(fish_list[school_id_1][id_1].y - fish_list[school_id_2][id_2].y) * (fish_list[school_id_1][id_1].y - fish_list[school_id_2][id_2].y) +
@@ -25,9 +25,9 @@ double BoidsController::distance(int school_id_1, int id_1, int school_id_2, int
 }
 
 
-void BoidsController::initBoids(double rot_x, double rot_y, double rot_z, int numBoids, Fish fish_list[][100]) {
+void BoidsController::initBoids(double rot_x, double rot_y, double rot_z, int numBoids, Fish fish_list[][200]) {
 
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < numBoids; j++) {
 			fish_list[i][j].id = i;
 
@@ -46,33 +46,33 @@ void BoidsController::initBoids(double rot_x, double rot_y, double rot_z, int nu
 	}
 }
 
-void BoidsController::keepWithinBounds(int school_id, int id, Fish fish_list[][100]) {
-	int margin = 1;
-	double turnFactor = 0.005;
+void BoidsController::keepWithinBounds(int school_id, int id, Fish fish_list[][200]) {
+	int margin = 2;
+	double turnFactor = 0.05;
 
-	if (fish_list[school_id][id].x < -10 + margin) {
+	if (fish_list[school_id][id].x < -20 + margin) {
 		fish_list[school_id][id].d_x += turnFactor ;
 	}
-	if (fish_list[school_id][id].x > 10 - margin) {
+	if (fish_list[school_id][id].x > 20 - margin) {
 		fish_list[school_id][id].d_x -= turnFactor;
 	}
 	if (fish_list[school_id][id].y < 0.0 + margin) { //HARD SURFICE
 		fish_list[school_id][id].d_y += turnFactor;
 	}
-	if (fish_list[school_id][id].y > 15 - margin) {
+	if (fish_list[school_id][id].y > 30 - margin) {
 		fish_list[school_id][id].d_y -= turnFactor;
 	}
-	if (fish_list[school_id][id].z < -10 + margin) {
+	if (fish_list[school_id][id].z < -20 + margin) {
 		fish_list[school_id][id].d_z += turnFactor;
 	}
-	if (fish_list[school_id][id].z > 10 - margin) {
+	if (fish_list[school_id][id].z > 20 - margin) {
 		fish_list[school_id][id].d_z -= turnFactor;
 	}
 }
 
 
-void BoidsController::flyTowardsCenter(int school_id, int id, int numBoids, Fish fish_list[][100]) {
-	double centeringFactor = 0.0005; // adjust velocity by this %
+void BoidsController::flyTowardsCenter(int school_id, int id, int numBoids, Fish fish_list[][200]) {
+	double centeringFactor = 0.005; // adjust velocity by this %
 
 	double centerX = 0;
 	double centerY = 0;
@@ -102,24 +102,23 @@ void BoidsController::flyTowardsCenter(int school_id, int id, int numBoids, Fish
 
 
 // Move away from other boids that are too close to avoid colliding
-void BoidsController::avoidOthers(int school_id, int id, int numBoids, Fish fish_list[][100]) {
+void BoidsController::avoidOthers(int school_id, int id, int numBoids, Fish fish_list[][200]) {
 	int minDistance = 3; // The distance to stay away from other boids
-	double avoidFactor = 0.0005; // Adjust velocity by this %
+	double avoidFactor = 0.005; // Adjust velocity by this %
 	double moveX = 0;
 	double moveY = 0;
 	double moveZ = 0;
 
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < numBoids; j++) {
-
-			if (fish_list[i][j].id != fish_list[school_id][id].id) {
-				double dist = distance(school_id, id, i, j, fish_list);
-				if (dist < minDistance) {
-					moveX += (fish_list[school_id][id].x - fish_list[j][i].x) / (dist * dist);
-					moveY += (fish_list[school_id][id].y - fish_list[j][i].y) / (dist * dist);
-					moveZ += (fish_list[school_id][id].z - fish_list[j][i].z) / (dist * dist);
-				}
+			double dist = distance(school_id, id, i, j, fish_list);
+			if (dist != 0 && dist < minDistance) {
+				moveX += (fish_list[school_id][id].x - fish_list[i][j].x) / dist;
+				moveY += (fish_list[school_id][id].y - fish_list[i][j].y) / dist;
+				moveZ += (fish_list[school_id][id].z - fish_list[i][j].z) / dist;
 			}
+
+	
 		}
 
 		fish_list[school_id][id].d_x += moveX * avoidFactor;
@@ -128,7 +127,7 @@ void BoidsController::avoidOthers(int school_id, int id, int numBoids, Fish fish
 	}
 }
 
-void BoidsController::matchVelocity(int school_id, int id, int numBoids, Fish fish_list[][100]) {
+void BoidsController::matchVelocity(int school_id, int id, int numBoids, Fish fish_list[][200]) {
 	double matchingFactor = 0.005; // Adjust by this % of average velocity
 
 	double avgDX = 0;
@@ -156,7 +155,7 @@ void BoidsController::matchVelocity(int school_id, int id, int numBoids, Fish fi
 	}
 }
 
-void BoidsController::limitSpeed(int school_id, int id, int numBoids, Fish fish_list[][100]) {
+void BoidsController::limitSpeed(int school_id, int id, int numBoids, Fish fish_list[][200]) {
 	double speedLimit = 0.5;
 
 	double speed = sqrt(
@@ -173,18 +172,26 @@ void BoidsController::limitSpeed(int school_id, int id, int numBoids, Fish fish_
 }
 
 
-void BoidsController::update(int numBoids, Fish fish_list[][100]) {
+void BoidsController::update(int numBoids, Fish fish_list[][200]) {
 	// Update each boid
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 3; i++) {
+
+		/*
+		flyTowardsCenter(i, j, numBoids, fish_list);
+		matchVelocity(i, j, numBoids, fish_list);
+		limitSpeed(i, j, numBoids, fish_list);
+		keepWithinBounds(i, j, fish_list);
+		/*
+		*/
 		for (int j = 0; j < numBoids; j++) {
 			// Update the velocities according to each rule
 
 			//fish boid = fish_list[i];
-			flyTowardsCenter(i, j, numBoids, fish_list);
-			avoidOthers(i, j, numBoids, fish_list);
-			matchVelocity(i, j, numBoids, fish_list);
-			limitSpeed(i, j, numBoids, fish_list);
-			keepWithinBounds(i, j, fish_list);
+			flyTowardsCenter(i, j,	numBoids, fish_list);
+			avoidOthers(i, j,		numBoids, fish_list);
+			matchVelocity(i, j,		numBoids, fish_list);
+			limitSpeed(i, j,		numBoids, fish_list);
+			keepWithinBounds(i, j,			  fish_list);
 
 			// Update the position based on the current velocity
 			fish_list[i][j].x += fish_list[i][j].d_x;

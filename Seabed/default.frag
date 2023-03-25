@@ -22,6 +22,8 @@ uniform vec3 lightPos;
 // Gets the position of the camera from the main function
 uniform vec3 camPos;
 
+uniform vec3 fishColor;
+
 void main()
 {
 	// ambient lighting
@@ -40,5 +42,5 @@ void main()
 	float specular = specAmount * specularLight;
 
 	// outputs final color
-	FragColor = texture(tex0, texCoord) * lightColor * (diffuse + ambient + specular);
+	FragColor = vec4(fishColor, 1.0);
 }

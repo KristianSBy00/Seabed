@@ -54,10 +54,10 @@ GLfloat vertices[] =
 // Vertices coordinates
 GLfloat vertices_floor[] =
 { //     COORDINATES     /        COLORS        /    TexCoord    /       NORMALS     //
-	-10.0f, -1.0f,  10.0f,		1.0f, 1.0f, 1.0f,		0.0f, 0.0f,		0.0f, 1.0f, 0.0f,
-	-10.0f, -1.0f, -10.0f,		1.0f, 1.0f, 1.0f,		0.0f, 1.0f,		0.0f, 1.0f, 0.0f,
-	 10.0f, -1.0f, -10.0f,		1.0f, 1.0f, 1.0f,		1.0f, 1.0f,		0.0f, 1.0f, 0.0f,
-	 10.0f, -1.0f,  10.0f,		1.0f, 1.0f, 1.0f,		1.0f, 0.0f,		0.0f, 1.0f, 0.0f
+	-20.0f, -1.0f,  20.0f,		1.0f, 1.0f, 1.0f,		0.0f, 0.0f,		0.0f, 1.0f, 0.0f,
+	-20.0f, -1.0f, -20.0f,		1.0f, 1.0f, 1.0f,		0.0f, 1.0f,		0.0f, 1.0f, 0.0f,
+	 20.0f, -1.0f, -20.0f,		1.0f, 1.0f, 1.0f,		1.0f, 1.0f,		0.0f, 1.0f, 0.0f,
+	 20.0f, -1.0f,  20.0f,		1.0f, 1.0f, 1.0f,		1.0f, 0.0f,		0.0f, 1.0f, 0.0f
 };
 
 // Indices for vertices order
@@ -110,8 +110,8 @@ GLuint lightIndices[] =
 const unsigned int width = 1000;
 const unsigned int height = 800;
 
-int numBoids = 300;
-Fish fish_list[2][100];
+int numBoids = 200;
+Fish fish_list[3][200];
 
 void draw_fish(Shader fish_shader){
 	glm::mat4 model;
@@ -121,21 +121,27 @@ void draw_fish(Shader fish_shader){
 	float b = 0;
 
 
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 3; i++) {
 		if (i == 0) {
 			r = 1;
 			g = 0;
 			b = 0;
 		}
-		else {
+		else if (i == 1) {
 			r = 0;
 			g = 0;
 			b = 1;
+		}
+		else {
+			r = 0;
+			g = 1;
+			b = 0;
 		}
 
 		for (int j = 0; j < numBoids; j++) {
 			model = fish_list[i][j].get_model_mat();
 
+			glUniform3f(glGetUniformLocation(fish_shader.ID, "fishColor"), r, g, b);
 			glUniformMatrix4fv(glGetUniformLocation(fish_shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		}
@@ -257,6 +263,8 @@ int main()
 	glm::mat4 floorModel = glm::mat4(1.0f);
 	floorModel = glm::translate(floorModel, floorPos);
 
+
+
 	floorShader.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(floorShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(floorModel));
 	glUniform4f(glGetUniformLocation(floorShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
@@ -285,8 +293,6 @@ int main()
 	brickTex.texUnit(shaderProgram, "tex0", 0);
 
 	// Original code from the tutorial
-	/*Texture brickTex("brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	brickTex.texUnit(shaderProgram, "tex0", 0);*/
 
 
 	// Enables the Depth Buffer
@@ -306,7 +312,7 @@ int main()
 		// Handles camera inputs
 		camera.Inputs(window);
 		// Updates and exports the camera matrix to the Vertex Shader
-		camera.updateMatrix(45.0f, 0.1f, 1000.0f);
+		camera.updateMatrix(45.0f, 0.1f, 2000.0f);
 
 
 		// Tells OpenGL which Shader Program we want to use
@@ -336,7 +342,7 @@ int main()
 		VAO1.Bind();
 
 
-		//boidsController.update(numBoids, fish_list);
+		boidsController.update(numBoids, fish_list);
 		draw_fish(shaderProgram);
 
 		// Draw primitives, number of indices, datatype of indices, index of indices
