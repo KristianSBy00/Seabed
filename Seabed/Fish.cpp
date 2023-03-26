@@ -92,4 +92,18 @@ glm::mat4 Fish::get_translation_mat() {
 glm::mat4 Fish::get_model_mat() {
 	glm::mat4 ident = glm::mat4(1.0f);
 	return ident * get_translation_mat() * get_rotation_mat();
+	//return ident * get_translation_mat() * get_rotation_mat();
+}
+
+glm::vec3 Fish::get_rot_vec() {
+	double hor_angle = CalcHeadingRad();
+	double pitch = CalcPitchRad();
+
+	return glm::vec3(float(rot_x), float(hor_angle + rot_y), float(-pitch + rot_z));
+
+}
+
+glm::vec3 Fish::get_position_vec() {
+	return glm::vec3(x, y, z);
+
 }

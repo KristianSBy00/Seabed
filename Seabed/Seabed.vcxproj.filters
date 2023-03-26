@@ -13,14 +13,14 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Resource Files\Shaders">
-      <UniqueIdentifier>{1b5ecd4e-cf4f-480d-93df-dd51d8c696cb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\Textures">
       <UniqueIdentifier>{ad00d1c8-9a2b-4e5f-896a-6067d93a5b28}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files\Models">
       <UniqueIdentifier>{42172cbc-2570-4e71-9b18-2ca4f7f4a867}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Models\Shaders">
+      <UniqueIdentifier>{1b5ecd4e-cf4f-480d-93df-dd51d8c696cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -60,25 +60,28 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="default.vert">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Resource Files\Models\Shaders</Filter>
     </None>
     <None Include="default.frag">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Resource Files\Models\Shaders</Filter>
     </None>
     <None Include="light.vert">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Resource Files\Models\Shaders</Filter>
     </None>
     <None Include="light.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="models\bunny\scene.bin">
-      <Filter>Resource Files\Models</Filter>
+      <Filter>Resource Files\Models\Shaders</Filter>
     </None>
     <None Include="floor.vert">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Resource Files\Models\Shaders</Filter>
     </None>
     <None Include="floor.frag">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Resource Files\Models\Shaders</Filter>
+    </None>
+    <None Include="fish.frag">
+      <Filter>Resource Files\Models\Shaders</Filter>
+    </None>
+    <None Include="fish.vert">
+      <Filter>Resource Files\Models\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

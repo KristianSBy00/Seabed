@@ -34,11 +34,12 @@
   <ItemGroup>
     <None Include="default.frag" />
     <None Include="default.vert" />
+    <None Include="fish.frag" />
+    <None Include="fish.vert" />
     <None Include="floor.frag" />
     <None Include="floor.vert" />
     <None Include="light.frag" />
     <None Include="light.vert" />
-    <None Include="models\bunny\scene.bin" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="boidsController.h" />

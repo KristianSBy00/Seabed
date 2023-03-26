@@ -28,5 +28,7 @@ public:
 	glm::mat4 get_rotation_mat();
 	glm::mat4 get_translation_mat();
 	glm::mat4 get_model_mat();
+	glm::vec3 get_rot_vec();
+	glm::vec3 get_position_vec();
 };
 #endif

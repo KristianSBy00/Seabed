@@ -11,6 +11,10 @@ namespace fs = std::filesystem;
 #include<glm/gtc/matrix_transform.hpp>
 #include<glm/gtc/type_ptr.hpp>
 #include <cmath>
+#include <vector>
+#include <stdio.h>
+#include <string>
+#include <cstring>
 
 #include"Texture.h"
 #include"shaderClass.h"
@@ -20,9 +24,9 @@ namespace fs = std::filesystem;
 #include"Camera.h"
 #include"Fish.h"
 #include"boidsController.h"
+using namespace std;
 
 # define PI           3.14159265358979323846  /* pi */
-
 
 // Vertices coordinates
 GLfloat vertices[] =
@@ -110,8 +114,8 @@ GLuint lightIndices[] =
 const unsigned int width = 1000;
 const unsigned int height = 800;
 
-int numBoids = 200;
-Fish fish_list[3][200];
+int numBoids = NUMBER_FISH;
+Fish fish_list[NUMBER_SCOALES][NUMBER_FISH];
 
 void draw_fish(Shader fish_shader){
 	glm::mat4 model;
@@ -121,7 +125,7 @@ void draw_fish(Shader fish_shader){
 	float b = 0;
 
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < NUMBER_SCOALES; i++) {
 		if (i == 0) {
 			r = 1;
 			g = 0;
@@ -149,9 +153,110 @@ void draw_fish(Shader fish_shader){
 }
 
 
+bool loadOBJ(
+	const char* path,
+	std::vector<glm::vec3>& out_vertices,
+	std::vector<glm::vec2>& out_uvs,
+	std::vector<glm::vec3>& out_normals
+) {
+	printf("Loading OBJ file %s...\n", path);
+
+	std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
+	std::vector<glm::vec3> temp_vertices;
+	std::vector<glm::vec2> temp_uvs;
+	std::vector<glm::vec3> temp_normals;
+
+	FILE* file;
+	errno_t err = fopen_s(&file, path, "r");
+	if (err != 0) {
+		printf("Impossible to open the file ! Are you in the right path ? See Tutorial 1 for details\n");
+		return false;
+	}
+
+	while (1) {
+
+		char lineHeader[128];
+		// read the first word of the line
+		int res = fscanf_s(file, lineHeader);
+		if (res == EOF)
+			break; // EOF = End Of File. Quit the loop.
+
+		// else : parse lineHeader
+
+		if (strcmp(lineHeader, "v") == 0) {
+			glm::vec3 vertex;
+			fscanf_s(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+			temp_vertices.push_back(vertex);
+		}
+		else if (strcmp(lineHeader, "vt") == 0) {
+			glm::vec2 uv;
+			fscanf_s(file, "%f %f\n", &uv.x, &uv.y);
+			uv.y = -uv.y; // Invert V coordinate since we will only use DDS texture, which are inverted. Remove if you want to use TGA or BMP loaders.
+			temp_uvs.push_back(uv);
+		}
+		else if (strcmp(lineHeader, "vn") == 0) {
+			glm::vec3 normal;
+			fscanf_s(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
+			temp_normals.push_back(normal);
+		}
+		else if (strcmp(lineHeader, "f") == 0) {
+			std::string vertex1, vertex2, vertex3;
+			unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
+			int matches = fscanf_s(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
+			if (matches != 9) {
+				printf("File can't be read by our simple parser :-( Try exporting with other options\n");
+				return false;
+			}
+			vertexIndices.push_back(vertexIndex[0]);
+			vertexIndices.push_back(vertexIndex[1]);
+			vertexIndices.push_back(vertexIndex[2]);
+			uvIndices.push_back(uvIndex[0]);
+			uvIndices.push_back(uvIndex[1]);
+			uvIndices.push_back(uvIndex[2]);
+			normalIndices.push_back(normalIndex[0]);
+			normalIndices.push_back(normalIndex[1]);
+			normalIndices.push_back(normalIndex[2]);
+		}
+		else {
+			// Probably a comment, eat up the rest of the line
+			char stupidBuffer[1000];
+			fgets(stupidBuffer, 1000, file);
+		}
+
+
+	}
+
+	// For each vertex of each triangle
+	for (unsigned int i = 0; i < vertexIndices.size(); i++) {
+
+		// Get the indices of its attributes
+		unsigned int vertexIndex = vertexIndices[i];
+		unsigned int uvIndex = uvIndices[i];
+		unsigned int normalIndex = normalIndices[i];
+
+		// Get the attributes thanks to the index
+		glm::vec3 vertex = temp_vertices[vertexIndex - 1];
+		glm::vec2 uv = temp_uvs[uvIndex - 1];
+		glm::vec3 normal = temp_normals[normalIndex - 1];
+
+		// Put the attributes in buffers
+		out_vertices.push_back(vertex);
+		out_uvs.push_back(uv);
+		out_normals.push_back(normal);
+
+	}
+
+	return true;
+}
+
+
 int main()
 {
-	//initBoids();
+	std::vector<glm::vec3> fish_vertices;
+	std::vector<glm::vec2> fish_uvs;
+	std::vector<glm::vec3> fish_normals; // Won't be used at the moment.
+	bool res = loadOBJ("fish.obj", fish_vertices, fish_uvs, fish_normals);
+
 	BoidsController boidsController = BoidsController();
 	boidsController.initBoids(0, PI / 2, PI / 2, numBoids, fish_list);
 	// Initialize GLFW
@@ -183,7 +288,15 @@ int main()
 	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
 	glViewport(0, 0, width, height);
 
-
+	
+	/*
+	VAO VAO3;
+	VAO3.Bind();
+	VBO VBO3(fish_vertices);
+	VAO3.LinkAttrib(VBO3, 0, 3, GL_FLOAT, 11 * sizeof(float), (void*)0);
+	VBO3.Unbind();
+	VAO3.Unbind();
+	*/
 	Shader floorShader("floor.vert", "floor.frag");
 	// New
 	VAO VAO2;
@@ -192,7 +305,6 @@ int main()
 	VBO VBO2(vertices_floor, sizeof(vertices_floor));
 	// Generates Element Buffer Object and links it to indices
 	EBO EBO2(indices_floor, sizeof(indices_floor));
-
 
 	// Links VBO attributes such as coordinates and colors to VAO
 	VAO2.LinkAttrib(VBO2, 0, 3, GL_FLOAT, 11 * sizeof(float), (void*)0);
@@ -212,7 +324,7 @@ int main()
 
 
 	// Generates Shader object using shaders default.vert and default.frag
-	Shader shaderProgram("default.vert", "default.frag");
+	Shader fishShader("fish.vert", "fish.frag");
 	// Generates Vertex Array Object and binds it
 	VAO VAO1;
 	VAO1.Bind();
@@ -249,7 +361,6 @@ int main()
 	lightVBO.Unbind();
 	lightEBO.Unbind();
 
-
 	glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	glm::vec3 lightPos = glm::vec3(0.0f, 100.0f, 0.0f);
 	glm::mat4 lightModel = glm::mat4(1.0f);
@@ -263,8 +374,6 @@ int main()
 	glm::mat4 floorModel = glm::mat4(1.0f);
 	floorModel = glm::translate(floorModel, floorPos);
 
-
-
 	floorShader.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(floorShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(floorModel));
 	glUniform4f(glGetUniformLocation(floorShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
@@ -272,10 +381,10 @@ int main()
 	lightShader.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
 	glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-	shaderProgram.Activate();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(pyramidModel));
-	glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-	glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	fishShader.Activate();
+	glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(pyramidModel));
+	glUniform4f(glGetUniformLocation(fishShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	glUniform3f(glGetUniformLocation(fishShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
 	/*
 	* I'm doing this relative path thing in order to centralize all the resources into one folder and not
@@ -290,7 +399,7 @@ int main()
 
 	// Texture
 	Texture brickTex("brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	brickTex.texUnit(shaderProgram, "tex0", 0);
+	brickTex.texUnit(fishShader, "tex0", 0);
 
 	// Original code from the tutorial
 
@@ -314,43 +423,23 @@ int main()
 		// Updates and exports the camera matrix to the Vertex Shader
 		camera.updateMatrix(45.0f, 0.1f, 2000.0f);
 
-
 		// Tells OpenGL which Shader Program we want to use
-		shaderProgram.Activate();
+		fishShader.Activate();
 		// Exports the camera Position to the Fragment Shader for specular lighting
-		glUniform3f(glGetUniformLocation(shaderProgram.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
+		glUniform3f(glGetUniformLocation(fishShader.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 		// Export the camMatrix to the Vertex Shader of the pyramid
-		camera.Matrix(shaderProgram, "camMatrix");
-
-		//double x = sin(glfwGetTime() / 2) * 2;
-		//double z = -cos(glfwGetTime() / 2) * 2;
-		//double y = 0.5*sin(glfwGetTime()*2) + .5;
-
-		//double hor_angle = CalcHeadingRad(delta_x, delta_z, delta_y);
-		//double pitch = CalcPitchRad(delta_x, delta_z, delta_y);
-
-		//glm::mat4 translation = glm::translate(glm::vec3(x, y, z));
-		//glm::mat4 rot = get_rotation_vec(0, PI / 2, PI / 2, delta_x, delta_y, delta_z);
-
-		//glm::mat4 model = translation * rot;
-
-		//glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		camera.Matrix(fishShader, "camMatrix");
 
 		// Binds texture so that is appears in rendering
 		brickTex.Bind();
 		// Bind the VAO so OpenGL knows to use it
 		VAO1.Bind();
 
-
 		boidsController.update(numBoids, fish_list);
-		draw_fish(shaderProgram);
+		draw_fish(fishShader);
+		glBufferData(GL_ARRAY_BUFFER, fish_vertices.size() * sizeof(glm::vec3), &fish_vertices[0], GL_STATIC_DRAW);
 
 		// Draw primitives, number of indices, datatype of indices, index of indices
-		//glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
-
-		//glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		//glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
-
 		floorShader.Activate();
 		glUniform3f(glGetUniformLocation(floorShader.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 		// Export the camMatrix to the Vertex Shader of the pyramid
@@ -383,7 +472,7 @@ int main()
 	VBO1.Delete();
 	EBO1.Delete();
 	brickTex.Delete();
-	shaderProgram.Delete();
+	fishShader.Delete();
 	lightVAO.Delete();
 	lightVBO.Delete();
 	lightEBO.Delete();
