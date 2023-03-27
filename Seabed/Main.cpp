@@ -29,6 +29,7 @@ using namespace std;
 # define PI           3.14159265358979323846  /* pi */
 
 // Vertices coordinates
+/*
 GLfloat vertices[] =
 { //     COORDINATES     /        COLORS          /    TexCoord   /        NORMALS       //
 	-0.1f, 0.0f,  0.1f,     1.0f, 1.0f, 1.0f, 	 0.0f, 0.0f,      0.0f, -1.0f, 0.0f, // Bottom side
@@ -52,7 +53,31 @@ GLfloat vertices[] =
 	-0.1f, 0.0f,  0.1f,     1.0f, 1.0f, 1.0f,	 0.0f, 0.0f,      0.0f, 0.5f,  0.8f, // Facing side
 	 0.0f, 0.5f,  0.0f,     1.0f, 1.0f, 1.0f,	 2.5f, 5.0f,      0.0f, 0.5f,  0.8f  // Facing side
 };
+*/
 
+std::vector<GLfloat> vertices = 
+{ //     COORDINATES     /        COLORS          /    TexCoord   /        NORMALS       //
+	-0.1f, 0.0f, 0.1f,		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, // Bottom side
+	-0.1f, 0.0f, -0.1f,		1.0f, 1.0f, 1.0f, 0.0f, 5.0f, 0.0f, -1.0f, 0.0f, // Bottom side
+	0.1f, 0.0f, -0.1f,		1.0f, 1.0f, 1.0f, 5.0f, 5.0f, 0.0f, -1.0f, 0.0f, // Bottom side
+	0.1f, 0.0f, 0.1f,		1.0f, 1.0f, 1.0f, 5.0f, 0.0f, 0.0f, -1.0f, 0.0f, // Bottom side
+
+	-0.1f, 0.0f, 0.1f,		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, -0.8f, 0.5f, 0.0f, // Left Side
+	-0.1f, 0.0f, -0.1f,		1.0f, 1.0f, 1.0f, 5.0f, 0.0f, -0.8f, 0.5f, 0.0f, // Left Side
+	0.0f, 0.5f, 0.0f,		1.0f, 1.0f, 1.0f, 2.5f, 5.0f, -0.8f, 0.5f, 0.0f, // Left Side
+
+	-0.1f, 0.0f, -0.1f,		1.0f, 1.0f, 1.0f, 5.0f, 0.0f, 0.0f, 0.5f, -0.8f, // Non-facing side
+	0.1f, 0.0f, -0.1f,		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.5f, -0.8f, // Non-facing side
+	0.0f, 0.5f, 0.0f,		1.0f, 1.0f, 1.0f, 2.5f, 5.0f, 0.0f, 0.5f, -0.8f, // Non-facing side
+
+	0.1f, 0.0f, -0.1f,		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.8f, 0.5f, 0.0f, // Right side
+	0.1f, 0.0f, 0.1f,		1.0f, 1.0f, 1.0f, 5.0f, 0.0f, 0.8f, 0.5f, 0.0f, // Right side
+	0.0f, 0.5f, 0.0f,		1.0f, 1.0f, 1.0f, 2.5f, 5.0f, 0.8f, 0.5f, 0.0f, // Right side
+
+	0.1f, 0.0f, 0.1f,		1.0f, 1.0f, 1.0f, 5.0f, 0.0f, 0.0f, 0.5f, 0.8f, // Facing side
+	-0.1f, 0.0f, 0.1f,		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.8f, // Facing side
+	0.0f, 0.5f, 0.0f,		1.0f, 1.0f, 1.0f, 2.5f, 5.0f, 0.0f, 0.5f, 0.8f  // Facing side
+};
 
 
 // Vertices coordinates
@@ -157,7 +182,8 @@ bool loadOBJ(
 	const char* path,
 	std::vector<glm::vec3>& out_vertices,
 	std::vector<glm::vec2>& out_uvs,
-	std::vector<glm::vec3>& out_normals
+	std::vector<glm::vec3>& out_normals,
+	std::vector<GLfloat>&  test_fish_vertices
 ) {
 	printf("Loading OBJ file %s...\n", path);
 
@@ -172,6 +198,7 @@ bool loadOBJ(
 		printf("Impossible to open the file ! Are you in the right path ? See Tutorial 1 for details\n");
 		return false;
 	}
+	int vert_count = 0;
 
 	while (1) {
 
@@ -184,6 +211,8 @@ bool loadOBJ(
 		// else : parse lineHeader
 
 		if (strcmp(lineHeader, "v") == 0) {
+			vert_count++;
+			printf("found vertex");
 			glm::vec3 vertex;
 			fscanf_s(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
 			temp_vertices.push_back(vertex);
@@ -222,13 +251,17 @@ bool loadOBJ(
 			char stupidBuffer[1000];
 			fgets(stupidBuffer, 1000, file);
 		}
+	}
 
-
+	// For each vertex of each triangle
+	for (unsigned int i = 0; i < vert_count/3; i++) {
+		test_fish_vertices.push_back(temp_vertices[i].x);
+		test_fish_vertices.push_back(temp_vertices[i].y);
+		test_fish_vertices.push_back(temp_vertices[i].z);
 	}
 
 	// For each vertex of each triangle
 	for (unsigned int i = 0; i < vertexIndices.size(); i++) {
-
 		// Get the indices of its attributes
 		unsigned int vertexIndex = vertexIndices[i];
 		unsigned int uvIndex = uvIndices[i];
@@ -243,19 +276,33 @@ bool loadOBJ(
 		out_vertices.push_back(vertex);
 		out_uvs.push_back(uv);
 		out_normals.push_back(normal);
-
 	}
 
 	return true;
 }
 
+void print_guy(std::vector<GLfloat> guy) {
+	for (int i = 0; i < guy.size(); i++) {
+		printf("%f\n", guy[i]);
+	}
+}
+
 
 int main()
 {
+
+	std::vector<GLfloat> test_fish_vertices;
+	std::vector<GLuint> test_fish_indices;
+
 	std::vector<glm::vec3> fish_vertices;
 	std::vector<glm::vec2> fish_uvs;
 	std::vector<glm::vec3> fish_normals; // Won't be used at the moment.
-	bool res = loadOBJ("fish.obj", fish_vertices, fish_uvs, fish_normals);
+	bool res = loadOBJ("fish.obj", fish_vertices, fish_uvs, fish_normals, test_fish_vertices);
+
+	printf("print guy");
+	printf("print %f", test_fish_vertices[0]);
+
+	print_guy(test_fish_vertices);
 
 	BoidsController boidsController = BoidsController();
 	boidsController.initBoids(0, PI / 2, PI / 2, numBoids, fish_list);
@@ -288,15 +335,6 @@ int main()
 	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
 	glViewport(0, 0, width, height);
 
-	
-	/*
-	VAO VAO3;
-	VAO3.Bind();
-	VBO VBO3(fish_vertices);
-	VAO3.LinkAttrib(VBO3, 0, 3, GL_FLOAT, 11 * sizeof(float), (void*)0);
-	VBO3.Unbind();
-	VAO3.Unbind();
-	*/
 	Shader floorShader("floor.vert", "floor.frag");
 	// New
 	VAO VAO2;
@@ -328,10 +366,11 @@ int main()
 	// Generates Vertex Array Object and binds it
 	VAO VAO1;
 	VAO1.Bind();
-	// Generates Vertex Buffer Object and links it to vertices
-	VBO VBO1(vertices, sizeof(vertices));
+	// Generates Vertex Buffer Object and links it to 
+	VBO VBO1(test_fish_vertices);
 	// Generates Element Buffer Object and links it to indices
-	EBO EBO1(indices, sizeof(indices));
+	//EBO EBO1(indices, sizeof(indices));
+	EBO EBO1(test_fish_indices);
 
 
 
@@ -437,7 +476,7 @@ int main()
 
 		boidsController.update(numBoids, fish_list);
 		draw_fish(fishShader);
-		glBufferData(GL_ARRAY_BUFFER, fish_vertices.size() * sizeof(glm::vec3), &fish_vertices[0], GL_STATIC_DRAW);
+		//glBufferData(GL_ARRAY_BUFFER, fish_vertices.size() * sizeof(glm::vec3), &fish_vertices[0], GL_STATIC_DRAW);
 
 		// Draw primitives, number of indices, datatype of indices, index of indices
 		floorShader.Activate();
