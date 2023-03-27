@@ -45,10 +45,10 @@ GLuint indices_triangle[] =
 // Vertices coordinates
 Vertex vertices[] =
 { //               COORDINATES           /            COLORS          /           NORMALS         /       TEXTURE COORDINATES    //
-	Vertex{glm::vec3(-20.0f, 0.0f,  20.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
-	Vertex{glm::vec3(-20.0f, 0.0f, -20.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3(20.0f, 0.0f, -20.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
-	Vertex{glm::vec3(20.0f, 0.0f,  20.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
+	Vertex{glm::vec3(-20.0f, 0.0f,  20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(0.0f, 0.0f)},
+	Vertex{glm::vec3(-20.0f, 0.0f, -20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(0.0f, 1.0f)},
+	Vertex{glm::vec3(20.0f, 0.0f, -20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(1.0f, 1.0f)},
+	Vertex{glm::vec3(20.0f, 0.0f,  20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(1.0f, 0.0f)}
 };
 
 // Indices for vertices order
@@ -89,13 +89,12 @@ GLuint lightIndices[] =
 int numBoids = NUMBER_FISH;
 Fish fish_list[NUMBER_SCOALES][NUMBER_FISH];
 
-void draw_fish(Shader fish_shader) {
+void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 lightPos) {
 	glm::mat4 model;
 
 	float r = 0;
 	float g = 0;
 	float b = 0;
-
 
 	for (int i = 0; i < NUMBER_SCOALES; i++) {
 		if (i == 0) {
@@ -117,16 +116,35 @@ void draw_fish(Shader fish_shader) {
 		for (int j = 0; j < numBoids; j++) {
 			model = fish_list[i][j].get_model_mat();
 
-			glUniform3f(glGetUniformLocation(fish_shader.ID, "fishColor"), r, g, b);
-			glUniformMatrix4fv(glGetUniformLocation(fish_shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
+			glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"), r, g, b);
+			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+			glUniform3f(glGetUniformLocation(fishShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+			fishMesh.Draw(fishShader, camera);
 		}
 	}
 }
 
-
 int main()
 {
+
+	std::vector <Shoal> sholes = std::vector<Shoal>();
+
+	glm::vec3 colors[] = {
+		glm::vec3(1.0, 0.0, 0.0),
+		glm::vec3(0.0, 1.0, 0.0),
+		glm::vec3(0.0, 0.0, 1.0),
+	};
+	for (int i = 0; i < 3; i++) {
+
+		Shoal shoal = Shoal(colors[i]);
+
+		for (int j = 0; j < 150; j++) {
+			shoal.add(Fish());
+		}
+
+		sholes.push_back(shoal);
+	}
+
 	// Initialize GLFW
 	glfwInit();
 
@@ -163,19 +181,6 @@ int main()
 	* folder and then give a relative path from this folder to whatever resource you want to get to.
 	* Also note that this requires C++17, so go to Project Properties, C/C++, Language, and select C++17
 	*/
-	//std::string parentDir = (fs::current_path().fs::path::parent_path()).string();
-	//std::string texPath = "/Resources/YoutubeOpenGL 10 - Specular Maps/";
-
-
-	// Texture data
-	/*
-	Texture textures[]
-	{
-		Texture("planks.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
-		Texture("planksSpec.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE)
-	};
-	*/
-
 
 	// Original code from the tutorial
 	Texture textures[]
@@ -212,7 +217,7 @@ int main()
 
 
 	glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
+	glm::vec3 lightPos = glm::vec3(0.0f, 20.0f, 0.0f);
 	glm::mat4 lightModel = glm::mat4(1.0f);
 	lightModel = glm::translate(lightModel, lightPos);
 
@@ -228,14 +233,20 @@ int main()
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModel));
 	glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-	fishShader.Activate();
-
 
 	// Enables the Depth Buffer
 	glEnable(GL_DEPTH_TEST);
 
 	// Creates camera object
 	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
+
+	BoidsController boidsController = BoidsController();
+	boidsController.initBoids(0, PI / 2, PI / 2, numBoids, fish_list);
+	boidsController.initBoids(0, PI / 2, PI / 2, sholes);
+	
+	printf("GUY:\n");
+	printf("GUY: %f\n", sholes[0].fish[0].x);
+	printf("GUY:\n");
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -251,11 +262,17 @@ int main()
 		// Updates and exports the camera matrix to the Vertex Shader
 		camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
-
 		// Draws different meshes
-		floor.Draw(shaderProgram, camera);
+		lightShader.Activate();
 		light.Draw(lightShader, camera);
-		fish.Draw(shaderProgram, camera);
+
+		shaderProgram.Activate();
+		floor.Draw(shaderProgram, camera);
+
+		fishShader.Activate();
+		glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+		boidsController.update(numBoids, fish_list);
+		draw_fish(fish, fishShader, camera, lightPos);
 
 
 		// Swap the back buffer with the front buffer
@@ -269,6 +286,7 @@ int main()
 	// Delete all the objects we've created
 	shaderProgram.Delete();
 	lightShader.Delete();
+	fishShader.Delete();
 	// Delete window before ending the program
 	glfwDestroyWindow(window);
 	// Terminate GLFW before ending the program

@@ -46,6 +46,29 @@ void BoidsController::initBoids(double rot_x, double rot_y, double rot_z, int nu
 	}
 }
 
+void BoidsController::initBoids(double rot_x, double rot_y, double rot_z, std::vector <Shoal>& sholes) {
+	for (int i = 0; i < sholes.size(); i++) {
+		printf("bruh");
+		std::vector<Fish>& fish = sholes[i].get();
+
+		for (int j = 0; j < fish.size(); j++) {
+			fish[j].id = i;
+
+			fish[j].x = fRand(-10, 10);
+			fish[j].y = fRand(0.5, 15);
+			fish[j].z = fRand(-10, 10);
+
+			fish[j].d_x = fRand(-0.1, 0.1);
+			fish[j].d_y = fRand(-0.1, 0.1);
+			fish[j].d_z = fRand(-0.1, 0.1);
+
+			fish[j].rot_x = rot_x;
+			fish[j].rot_y = rot_y;
+			fish[j].rot_z = rot_z;
+		}
+	}
+}
+
 void BoidsController::keepWithinBounds(int school_id, int id, Fish fish_list[][NUMBER_FISH]) {
 	int margin = 3;
 	double turnFactor = 0.01;

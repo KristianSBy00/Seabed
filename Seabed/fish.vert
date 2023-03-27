@@ -2,25 +2,23 @@
 
 // Positions/Coordinates
 layout (location = 0) in vec3 aPos;
-// Colors
-layout (location = 1) in vec3 aColor;
-// Texture Coordinates
-layout (location = 2) in vec2 aTex;
-// Normals (not necessarily normalized)
-layout (location = 3) in vec3 aNormal;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec3 aColor;
+layout (location = 3) in vec2 aTex;
 
 
-// Imports the camera matrix from the main function
+out vec3 Normal;
+out vec3 crntPos;
+
 uniform mat4 camMatrix;
-// Imports the model matrix from the main function
 uniform mat4 model;
 
 
 void main()
 {
-	// calculates current position
+	Normal = aNormal;
 
-    //crntPos = vec3(model * vec4(aPos, 1.0));
+	crntPos = vec3(model * vec4(aPos, 1.0f));
 
 	gl_Position = camMatrix * model * vec4(aPos, 1.0);
 }
