@@ -8,6 +8,7 @@ layout (location = 3) in vec2 aTex;
 
 out vec3 frag_normals;
 out vec3 crntPos;
+out vec2 texCoord;
 
 uniform mat4 camMatrix;
 uniform mat4 model;
@@ -15,6 +16,7 @@ uniform mat4 model;
 
 void main()
 {
+	texCoord = aTex;
 	vec3 guy = aPos * 0.25;
 
 	crntPos = vec3(camMatrix * vec4(guy, 1.0f));

@@ -5,7 +5,9 @@ out vec4 FragColor;
 
 in vec3 crntPos;
 in vec3 frag_normals;
+in vec2 texCoord;
 
+uniform sampler2D tex0;
 uniform vec3 lightPos;
 uniform vec3 camPos;
 uniform vec3 fishColor;
@@ -37,7 +39,7 @@ vec4 pointLight()
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
 	float specular = specAmount * specularLight;
 
-	return vec4((diffuse * inten + ambient) * fishColor, 1.0);
+	return texture(tex0, texCoord) * (diffuse + ambient + specular) * vec4(fishColor, 1.0);
 }
 
 void main()

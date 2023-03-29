@@ -37,7 +37,7 @@ void tokenize(std::string const& str, const char delim,
 
 void read_obj(std::vector<Vertex>& vertices_for_func, std::vector<GLuint>& indices_for_func) {
 	string line;
-	ifstream myfile("newfishe.obj");
+	ifstream myfile("fish.obj");
 
 	const char delim = ' ';
 	const char delim2 = '/';
@@ -367,7 +367,7 @@ int main()
 	std::vector<GLuint> fishIndices = std::vector<GLuint>();
 
 	//read_obj(fishVertices, fishIndices);
-	newLoadOBJ("newfishe.obj", fishVertices, fishIndices);
+	newLoadOBJ("fish.obj", fishVertices, fishIndices);
 
 	//print_vec3_list(vertices);
 
@@ -428,16 +428,28 @@ int main()
 		Texture("sand.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
 	};
 
+	Texture fish_textures[]
+	{
+		Texture("fish_texture.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
+	};
+
+
+
 	Shader shaderProgram("default.vert", "default.frag");
 	std::vector <Vertex> verts(vertices_floor, vertices_floor + sizeof(vertices_floor) / sizeof(Vertex));
 	std::vector <GLuint> ind(indices, indices + sizeof(indices) / sizeof(GLuint));
 	std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
+
+	std::vector <Texture> fish_tex(fish_textures, fish_textures + sizeof(fish_textures) / sizeof(Texture));
+
+	//std::vector <Texture> fish_tex(tex, tex + sizeof(tex) / sizeof(Texture));
+
 	// Create floor mesh
 	Mesh floor(verts, ind, tex);
 
 	//Fishe
 	Shader fishShader("fish.vert", "fish.frag");
-	Mesh fish(fishVertices, fishIndices, tex);
+	Mesh fish(fishVertices, fishIndices, fish_tex);
 
 	Shader lightShader("light.vert", "light.frag");
 	std::vector<Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
@@ -512,6 +524,7 @@ int main()
 			boidsController.update(sholes);
 		}
 
+		fishShader.Activate();
 		draw_fish(fish, fishShader, camera, lightPos, sholes);
 
 		//newShader.Activate();
