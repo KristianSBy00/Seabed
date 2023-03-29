@@ -15,5 +15,6 @@ public:
 	Shoal(glm::vec3 init_color);
 	void add(Fish new_fish);
 	std::vector<Fish>& get();
+	std::vector <Fish> get_new();
 };
 #endif

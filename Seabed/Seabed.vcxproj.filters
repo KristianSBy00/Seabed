@@ -89,6 +89,12 @@
     <None Include="fish.vert">
       <Filter>Resource Files\Models\Shaders</Filter>
     </None>
+    <None Include="new.frag">
+      <Filter>Resource Files\Models\Shaders</Filter>
+    </None>
+    <None Include="new.vert">
+      <Filter>Resource Files\Models\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shaderClass.h">
@@ -119,6 +125,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shoal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tiny_obj_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

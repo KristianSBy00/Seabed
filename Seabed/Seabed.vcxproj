@@ -42,6 +42,8 @@
     <None Include="floor.vert" />
     <None Include="light.frag" />
     <None Include="light.vert" />
+    <None Include="new.frag" />
+    <None Include="new.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="boidsController.h" />
@@ -52,6 +54,7 @@
     <ClInclude Include="shaderClass.h" />
     <ClInclude Include="Shoal.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="VAO.h" />
     <ClInclude Include="VBO.h" />
   </ItemGroup>
@@ -130,6 +133,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -160,6 +164,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

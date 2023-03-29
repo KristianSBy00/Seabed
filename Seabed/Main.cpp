@@ -3,8 +3,119 @@
 
 # define PI           3.14159265358979323846  /* pi */
 
-const unsigned int width = 800;
-const unsigned int height = 800;
+
+#include <vector>
+#include <stdio.h>
+#include <string>
+#include <cstring>
+
+#include <glm/glm.hpp>
+#include "tiny_obj_loader.h"
+#include <cstdio>
+#include <stdio.h>
+
+
+using namespace std;
+
+const unsigned int width = 1366;
+const unsigned int height = 768;
+
+std::vector <Shoal> sholes;
+
+void tokenize(std::string const& str, const char delim,
+	std::vector<std::string>& out)
+{
+	// construct a stream from the string 
+	std::stringstream ss(str);
+
+	std::string s;
+	while (std::getline(ss, s, delim)) {
+		out.push_back(s);
+	}
+}
+
+
+void read_obj(std::vector<Vertex>& vertices_for_func, std::vector<GLuint>& indices_for_func) {
+	string line;
+	ifstream myfile("newfishe.obj");
+
+	const char delim = ' ';
+	const char delim2 = '/';
+
+	std::vector<glm::vec3> vertices_buffer = std::vector<glm::vec3>();
+	std::vector<glm::vec3> norm_buffer = std::vector<glm::vec3>();
+	std::vector<glm::vec2> tex_buffer = std::vector<glm::vec2>();
+
+	std::vector<GLuint> norm_indices = std::vector<GLuint>();
+
+	if (myfile.is_open()){
+		while (getline(myfile, line)){
+			if (line.rfind("vn", 0) == 0) {
+				line.erase(0, 3); //remove "v "
+				glm::vec3 new_vec = glm::vec3();
+
+				std::vector<std::string> out;
+				tokenize(line, delim, out);
+
+				for (int i = 0; i < 3; i++) {
+					new_vec[i] = std::stof(out[i]);
+				}
+				norm_buffer.push_back(new_vec);
+			}
+
+			else if (line.rfind("vt", 0) == 0) {
+				line.erase(0, 3); //remove "v "
+				glm::vec2 new_vec = glm::vec2();
+
+				std::vector<std::string> out;
+				tokenize(line, delim, out);
+
+				for (int i = 0; i < 2; i++) {
+					new_vec[i] = std::stof(out[i]);
+				}
+				tex_buffer.push_back(new_vec);
+			}
+
+			else if (line.rfind("v", 0) == 0) {
+				line.erase(0, 2); //remove "v "
+
+				glm::vec3 new_vec = glm::vec3();
+
+				std::vector<std::string> out;
+				tokenize(line, delim, out);
+
+				for (int i = 0; i < 3; i++) {
+					new_vec[i] = std::stof(out[i]);
+				}
+				vertices_buffer.push_back(new_vec);
+			}
+
+			else if (line.rfind("f", 0) == 0) {
+				line.erase(0, 2); //remove "v "
+				std::vector<std::string> out;
+				tokenize(line, delim, out);
+				for (auto& s : out) {
+					std::vector<std::string> out2;
+					tokenize(s, delim2, out2);
+					unsigned int num;
+					num = stoi(out2[0]);
+					indices_for_func.push_back(num-1);
+
+					num = stoi(out2[1]);
+					norm_indices.push_back(num - 1);
+				}
+			}
+		}
+		myfile.close();
+
+		for (int i = 0; i < vertices_buffer.size(); i++) {
+			Vertex vertex_to_add = { vertices_buffer[i], glm::vec3(1.0f, 1.0f, 1.0f), norm_buffer[i], tex_buffer [i]};
+			vertices_for_func.push_back(vertex_to_add);
+		}
+	}
+	else cout << "Unable to open file";
+
+}
 
 
 Vertex vertices_triangle[] =
@@ -43,7 +154,7 @@ GLuint indices_triangle[] =
 
 
 // Vertices coordinates
-Vertex vertices[] =
+Vertex vertices_floor[] =
 { //               COORDINATES           /            COLORS          /           NORMALS         /       TEXTURE COORDINATES    //
 	Vertex{glm::vec3(-20.0f, 0.0f,  20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(0.0f, 0.0f)},
 	Vertex{glm::vec3(-20.0f, 0.0f, -20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(0.0f, 1.0f)},
@@ -52,22 +163,21 @@ Vertex vertices[] =
 };
 
 // Indices for vertices order
-GLuint indices[] =
-{
+GLuint indices[] = {
 	0, 1, 2,
 	0, 2, 3
 };
 
 Vertex lightVertices[] =
 { //     COORDINATES     //
-	Vertex{glm::vec3(-0.1f, -0.1f,  0.1f)},
-	Vertex{glm::vec3(-0.1f, -0.1f, -0.1f)},
-	Vertex{glm::vec3(0.1f, -0.1f, -0.1f)},
-	Vertex{glm::vec3(0.1f, -0.1f,  0.1f)},
-	Vertex{glm::vec3(-0.1f,  0.1f,  0.1f)},
-	Vertex{glm::vec3(-0.1f,  0.1f, -0.1f)},
-	Vertex{glm::vec3(0.1f,  0.1f, -0.1f)},
-	Vertex{glm::vec3(0.1f,  0.1f,  0.1f)}
+	Vertex{glm::vec3(-1.0f, -1.0f,  1.0f)},
+	Vertex{glm::vec3(-1.0f, -1.0f, -1.0f)},
+	Vertex{glm::vec3(1.0f, -1.0f, -1.0f)},
+	Vertex{glm::vec3(1.0f, -1.0f,  1.0f)},
+	Vertex{glm::vec3(-1.0f,  1.0f,  1.0f)},
+	Vertex{glm::vec3(-1.0f,  1.0f, -1.0f)},
+	Vertex{glm::vec3(1.0f,  1.0f, -1.0f)},
+	Vertex{glm::vec3(1.0f,  1.0f,  1.0f)}
 };
 
 GLuint lightIndices[] =
@@ -86,37 +196,144 @@ GLuint lightIndices[] =
 	4, 6, 7
 };
 
-int numBoids = NUMBER_FISH;
-Fish fish_list[NUMBER_SCOALES][NUMBER_FISH];
 
-void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 lightPos) {
+void print_ind(std::vector<GLuint>& print_ind_var) {
+	for (int i = 0; i < print_ind_var.size(); i++) {
+		printf("%d, ", print_ind_var[i]);
+	}
+	printf("\n");
+}
+
+void print_ver(std::vector<Vertex>& print_ver) {
+	for (int i = 0; i < print_ver.size(); i++) {
+		printf("%f %f, %f | %f %f, %f | %f %f, %f | %f, %f\n", 
+			print_ver[i].position.x, print_ver[i].position.y, print_ver[i].position.z,
+			print_ver[i].normal.x, print_ver[i].normal.y, print_ver[i].normal.z,
+			print_ver[i].color.x, print_ver[i].color.y, print_ver[i].color.z,
+			print_ver[i].texUV.x, print_ver[i].texUV.y
+		);
+	}
+	printf("\n");
+}
+
+
+void newLoadOBJ(const char* path, std::vector<Vertex>& vertices_for_func, std::vector<GLuint>& indices_for_func) {
+	string line;
+	ifstream myfile(path);
+
+	const char delim = ' ';
+	const char delim2 = '/';
+
+	std::vector<GLuint> vertexIndices, uvIndices, normalIndices;
+	std::vector<glm::vec3> temp_vertices;
+	std::vector<glm::vec2> temp_uvs;
+	std::vector<glm::vec3> temp_normals;
+
+
+	if (myfile.is_open()) {
+		while (getline(myfile, line)) {
+			if (line.rfind("vn", 0) == 0) {
+				line.erase(0, 3); //remove "v "
+				glm::vec3 new_vec = glm::vec3();
+
+				std::vector<std::string> out;
+				tokenize(line, delim, out);
+
+				for (int i = 0; i < 3; i++) {
+					new_vec[i] = std::stof(out[i]);
+				}
+				temp_normals.push_back(new_vec);
+			}
+
+			else if (line.rfind("vt", 0) == 0) {
+				line.erase(0, 3); //remove "v "
+				glm::vec2 new_vec = glm::vec2();
+
+				std::vector<std::string> out;
+				tokenize(line, delim, out);
+
+				for (int i = 0; i < 2; i++) {
+					new_vec[i] = std::stof(out[i]);
+				}
+				temp_uvs.push_back(new_vec);
+			}
+
+			else if (line.rfind("v", 0) == 0) {
+				line.erase(0, 2); //remove "v "
+
+				glm::vec3 new_vec = glm::vec3();
+
+				std::vector<std::string> out;
+				tokenize(line, delim, out);
+
+				for (int i = 0; i < 3; i++) {
+					new_vec[i] = std::stof(out[i]);
+				}
+				temp_vertices.push_back(new_vec);
+			}
+
+			else if (line.rfind("f", 0) == 0) {
+				line.erase(0, 2); //remove "v "
+				std::vector<std::string> out;
+				tokenize(line, delim, out);
+				for (auto& s : out) {
+					std::vector<std::string> out2;
+					tokenize(s, delim2, out2);
+
+					unsigned int num;
+
+					num = stoi(out2[0]);
+					vertexIndices.push_back(num);
+
+					num = stoi(out2[2]);
+					normalIndices.push_back(num);
+
+					num = stoi(out2[1]);
+					uvIndices.push_back(num);
+				}
+			}
+		}
+		myfile.close();
+	}
+	// For each vertex of each triangle
+	for (unsigned int i = 0; i < vertexIndices.size(); i++) {
+		// Get the indices of its attributes
+		unsigned int vertexIndex = vertexIndices[i];
+		unsigned int uvIndex = uvIndices[i];
+		unsigned int normalIndex = normalIndices[i];
+
+		// Get the attributes thanks to the index
+		glm::vec3 vertex = temp_vertices[vertexIndex - 1];
+		glm::vec2 uv = temp_uvs[uvIndex - 1];
+		glm::vec3 normal = temp_normals[normalIndex - 1];
+
+		vertices_for_func.push_back(Vertex{ vertex , glm::vec3(1.0f, 1.0f, 1.0f) , normal, uv });
+		indices_for_func.push_back(i);
+
+	}
+}
+
+void print_vec3_list(std::vector<glm::vec3>& guy_to_print) {
+	for (int i = 0; i < guy_to_print.size(); i++) {
+		printf("<%f, %f, %f>\n", guy_to_print[i].x, guy_to_print[i].y, guy_to_print[i].z);
+	}
+}
+
+
+void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 lightPos, std::vector<Shoal>& sholes_in) {
 	glm::mat4 model;
 
-	float r = 0;
-	float g = 0;
-	float b = 0;
+	for (int i = 0; i < sholes_in.size(); i++) {
 
-	for (int i = 0; i < NUMBER_SCOALES; i++) {
-		if (i == 0) {
-			r = 1;
-			g = 0;
-			b = 0;
-		}
-		else if (i == 1) {
-			r = 0;
-			g = 0;
-			b = 1;
-		}
-		else {
-			r = 0;
-			g = 1;
-			b = 0;
-		}
+		std::vector<Fish>& shole = sholes_in[i].get();
 
-		for (int j = 0; j < numBoids; j++) {
-			model = fish_list[i][j].get_model_mat();
+		glm::vec3 color = sholes_in[i].color;
 
-			glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"), r, g, b);
+		for (int j = 0; j < shole.size(); j++) {
+
+			Fish& fish = shole[j];
+			model = fish.get_model_mat();
+			glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"), color.x, color.y, color.z);
 			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			glUniform3f(glGetUniformLocation(fishShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 			fishMesh.Draw(fishShader, camera);
@@ -124,8 +341,37 @@ void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 lightP
 	}
 }
 
+void draw_fish_smp(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 lightPos) {
+	glm::vec3 pos = glm::vec3(0.0f, 5.0f, 0.0f);
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, pos);
+
+	glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"),	1.0f, 1.0f, 1.0f);
+	glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glUniform3f(glGetUniformLocation(fishShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	fishMesh.Draw(fishShader, camera);
+}
+
+bool pasuseBoids = false;
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+		pasuseBoids = !pasuseBoids;
+}
+
+
 int main()
 {
+	std::vector<Vertex> fishVertices = std::vector<Vertex>();
+	std::vector<GLuint> fishIndices = std::vector<GLuint>();
+
+	//read_obj(fishVertices, fishIndices);
+	newLoadOBJ("newfishe.obj", fishVertices, fishIndices);
+
+	//print_vec3_list(vertices);
+
+	print_ver(fishVertices);
 
 	std::vector <Shoal> sholes = std::vector<Shoal>();
 
@@ -155,9 +401,10 @@ int main()
 	// Tell GLFW we are using the CORE profile
 	// So that means we only have the modern functions
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 	// Create a GLFWwindow object of 800 by 800 pixels, naming it "YoutubeOpenGL"
-	GLFWwindow* window = glfwCreateWindow(width, height, "YoutubeOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(width, height, "Seabed", NULL, NULL);
 	// Error check if the window fails to create
 	if (window == NULL)
 	{
@@ -167,32 +414,22 @@ int main()
 	}
 	// Introduce the window into the current context
 	glfwMakeContextCurrent(window);
+	glfwSetKeyCallback(window, key_callback);
 
 	//Load GLAD so it configures OpenGL
 	gladLoadGL();
-	// Specify the viewport of OpenGL in the Window
-	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
+
 	glViewport(0, 0, width, height);
 
-
-	/*
-	* I'm doing this relative path thing in order to centralize all the resources into one folder and not
-	* duplicate them between tutorial folders. You can just copy paste the resources from the 'Resources'
-	* folder and then give a relative path from this folder to whatever resource you want to get to.
-	* Also note that this requires C++17, so go to Project Properties, C/C++, Language, and select C++17
-	*/
 
 	// Original code from the tutorial
 	Texture textures[]
 	{
 		Texture("sand.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
-		//Texture("C:/Users/Kristian/source/repos/Seabed/Seabed/planksSpec.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE)
 	};
 
-	// Generates Shader object using shaders default.vert and default.frag
 	Shader shaderProgram("default.vert", "default.frag");
-	// Store mesh data in vectors for the mesh
-	std::vector <Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
+	std::vector <Vertex> verts(vertices_floor, vertices_floor + sizeof(vertices_floor) / sizeof(Vertex));
 	std::vector <GLuint> ind(indices, indices + sizeof(indices) / sizeof(GLuint));
 	std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
 	// Create floor mesh
@@ -200,24 +437,15 @@ int main()
 
 	//Fishe
 	Shader fishShader("fish.vert", "fish.frag");
-	// Store mesh data in vectors for the mesh
-	std::vector <Vertex> verts_tri(vertices_triangle, vertices_triangle + sizeof(vertices_triangle) / sizeof(Vertex));
-	std::vector <GLuint> ind_tri(indices_triangle, indices_triangle + sizeof(indices_triangle) / sizeof(GLuint));
-	// Create floor mesh
-	Mesh fish(verts_tri, ind_tri, tex);
+	Mesh fish(fishVertices, fishIndices, tex);
 
-
-	// Shader for light cube
 	Shader lightShader("light.vert", "light.frag");
-	// Store mesh data in vectors for the mesh
-	std::vector <Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
-	std::vector <GLuint> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(GLuint));
-	// Crate light mesh
+	std::vector<Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
+	std::vector<GLuint> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(GLuint));
 	Mesh light(lightVerts, lightInd, tex);
 
-
 	glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	glm::vec3 lightPos = glm::vec3(0.0f, 20.0f, 0.0f);
+	glm::vec3 lightPos = glm::vec3(0.0f, 40.0f, 0.0f);
 	glm::mat4 lightModel = glm::mat4(1.0f);
 	lightModel = glm::translate(lightModel, lightPos);
 
@@ -233,26 +461,30 @@ int main()
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModel));
 	glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	//glEnable(GL_DEPTH_TEST);
 
-	// Enables the Depth Buffer
+	fishShader.Activate();
+
+	objectPos = glm::vec3(0.0f, 4.0f, 0.0f);
+	objectModel = glm::mat4(1.0f);
+	objectModel = glm::translate(objectModel, objectPos);
+
+	glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"), 1.0f, 1.0f, 1.0f);
+	glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModel));
+	glUniform3f(glGetUniformLocation(fishShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 	glEnable(GL_DEPTH_TEST);
 
 	// Creates camera object
 	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
 
 	BoidsController boidsController = BoidsController();
-	boidsController.initBoids(0, PI / 2, PI / 2, numBoids, fish_list);
-	boidsController.initBoids(0, PI / 2, PI / 2, sholes);
-	
-	printf("GUY:\n");
-	printf("GUY: %f\n", sholes[0].fish[0].x);
-	printf("GUY:\n");
+	//boidsController.initBoids(0, PI / 2, PI / 2, numBoids, fish_list);
+	boidsController.initBoids(0, PI, 0, sholes);
 
 	// Main while loop
-	while (!glfwWindowShouldClose(window))
-	{
+	while (!glfwWindowShouldClose(window)){
 		// Specify the color of the background
-		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+		glClearColor(0.07f, 0.13f, 0.37f, 1.0f);
 		// Clean the back buffer and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -260,7 +492,7 @@ int main()
 		// Handles camera inputs
 		camera.Inputs(window);
 		// Updates and exports the camera matrix to the Vertex Shader
-		camera.updateMatrix(45.0f, 0.1f, 100.0f);
+		camera.updateMatrix(45.0f, 0.1f, 500.0f);
 
 		// Draws different meshes
 		lightShader.Activate();
@@ -269,11 +501,21 @@ int main()
 		shaderProgram.Activate();
 		floor.Draw(shaderProgram, camera);
 
-		fishShader.Activate();
-		glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-		boidsController.update(numBoids, fish_list);
-		draw_fish(fish, fishShader, camera, lightPos);
+		//fishShader.Activate();
+		//glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"), 1.0f, 0.0f, 0.0f);
+		//glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModel));
+		//glUniform3f(glGetUniformLocation(fishShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
+		//fish.Draw(fishShader, camera);
+
+		if (!pasuseBoids) {
+			boidsController.update(sholes);
+		}
+
+		draw_fish(fish, fishShader, camera, lightPos, sholes);
+
+		//newShader.Activate();
+		//draw_fish_smp(fish, fishShader, camera, lightPos);
 
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
