@@ -320,7 +320,7 @@ void print_vec3_list(std::vector<glm::vec3>& guy_to_print) {
 }
 
 
-void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 lightPos, std::vector<Shoal>& sholes_in) {
+void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 lightPos, std::vector<Shoal>& sholes_in, float rotation) {
 	glm::mat4 model;
 
 	for (int i = 0; i < sholes_in.size(); i++) {
@@ -336,6 +336,17 @@ void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 lightP
 			glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"), color.x, color.y, color.z);
 			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			glUniform3f(glGetUniformLocation(fishShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+
+			//"Animation"
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(sin(glm::radians(rotation*16))/8, 2.0 + sin(glm::radians(rotation * 8))/ 16, 0));
+
+			glm::mat4 rot = glm::rotate(cos(glm::radians(rotation*16))/8, glm::vec3(0, 1, 0));
+			rot = glm::rotate(rot, cos(glm::radians(rotation * 8)) / 16, glm::vec3(1, 0, 0));
+
+			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "rot"), 1, GL_FALSE, glm::value_ptr(rot));
+			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "tra"), 1, GL_FALSE, glm::value_ptr(model));
+
 			fishMesh.Draw(fishShader, camera);
 		}
 	}
@@ -371,7 +382,7 @@ int main()
 
 	//print_vec3_list(vertices);
 
-	print_ver(fishVertices);
+	//print_ver(fishVertices);
 
 	std::vector <Shoal> sholes = std::vector<Shoal>();
 
@@ -448,7 +459,9 @@ int main()
 	Mesh floor(verts, ind, tex);
 
 	//Fishe
+	//Shader fishShader("fish.vert", "fish.frag");
 	Shader fishShader("fish.vert", "fish.frag");
+
 	Mesh fish(fishVertices, fishIndices, fish_tex);
 
 	Shader lightShader("light.vert", "light.frag");
@@ -477,9 +490,10 @@ int main()
 
 	fishShader.Activate();
 
-	objectPos = glm::vec3(0.0f, 4.0f, 0.0f);
+	objectPos = glm::vec3(0.0f, 0.0f, 0.0f);
 	objectModel = glm::mat4(1.0f);
 	objectModel = glm::translate(objectModel, objectPos);
+	objectModel = glm::rotate(objectModel, (float)PI/16, glm::vec3(0, 1, 0));
 
 	glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"), 1.0f, 1.0f, 1.0f);
 	glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModel));
@@ -491,15 +505,28 @@ int main()
 
 	BoidsController boidsController = BoidsController();
 	//boidsController.initBoids(0, PI / 2, PI / 2, numBoids, fish_list);
-	boidsController.initBoids(0, PI, 0, sholes);
+	boidsController.initBoids(0, 0, 0, sholes);
+
+	double prevTime = glfwGetTime();
+
+	double timePassed = 0;
+	float rotation = 0;
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window)){
+
 		// Specify the color of the background
 		glClearColor(0.07f, 0.13f, 0.37f, 1.0f);
 		// Clean the back buffer and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+		double crntTime = glfwGetTime();
+		if (crntTime - prevTime >= 1/60)
+		{
+			rotation += 0.5f;
+			prevTime = crntTime;
+		}
 
 		// Handles camera inputs
 		camera.Inputs(window);
@@ -525,7 +552,18 @@ int main()
 		}
 
 		fishShader.Activate();
-		draw_fish(fish, fishShader, camera, lightPos, sholes);
+		draw_fish(fish, fishShader, camera, lightPos, sholes, rotation);
+
+		//objectModel = glm::mat4(1.0f);
+		//objectModel = glm::translate(objectModel, glm::vec3(sin(glm::radians(rotation*16))/8, 2.0 + sin(glm::radians(rotation * 8))/ 16, 0));
+
+		//glm::mat4 rot = glm::rotate(cos(glm::radians(rotation*16))/8, glm::vec3(0, 1, 0));
+		//rot = glm::rotate(rot, cos(glm::radians(rotation * 8)) / 16, glm::vec3(1, 0, 0));
+
+		//glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "rot"), 1, GL_FALSE, glm::value_ptr(rot));
+		//glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModel));
+
+		//fish.Draw(fishShader, camera);
 
 		//newShader.Activate();
 		//draw_fish_smp(fish, fishShader, camera, lightPos);

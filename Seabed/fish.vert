@@ -12,17 +12,37 @@ out vec2 texCoord;
 
 uniform mat4 camMatrix;
 uniform mat4 model;
+uniform mat4 tra;
 
+mat4 BuildTranslation(vec3 delta)
+{
+    mat4 m;
+    m[0][0] = 1;
+    m[1][1] = 1;
+    m[2][2] = 1;
+    m[3] = vec4(delta, 1.0);
+    return m;
+}
+
+uniform mat4 rot;
 
 void main()
 {
 	texCoord = aTex;
-	vec3 guy = aPos * 0.25;
+	vec3 scaledPos = aPos * 0.25;
 
-	crntPos = vec3(camMatrix * vec4(guy, 1.0f));
+	mat4 nRot = rot * scaledPos.z;
 
-	gl_Position = camMatrix * model * vec4(guy, 1.0f);
+	nRot[0][0] = 1;
+	nRot[1][1] = 1;
+	nRot[2][2] = 1;
+	nRot[3][3] = 1;
 
-	frag_normals = normalize(mat3(model) * aNormal);
-	//frag_normals = aNormal;
+	mat4 even_trans = BuildTranslation(vec3(0, 0, 0.5));
+
+	crntPos = vec3(camMatrix * vec4(scaledPos, 1.0f));
+
+	gl_Position = camMatrix * model * tra * nRot * even_trans * vec4(scaledPos, 1.0f);
+
+	frag_normals = normalize(mat3(model * tra * nRot * even_trans) * aNormal);
 }

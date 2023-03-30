@@ -218,7 +218,7 @@ void BoidsController::avoidOthers(int school_id, int id, int numBoids, Fish fish
 
 void BoidsController::avoidOthers(Fish& the_fish, std::vector <Shoal>& sholes) {
 	int minDistance = 2; // The distance to stay away from other boids
-	double avoidFactor = 0.0025; // Adjust velocity by this %
+	double avoidFactor = 0.0035; // Adjust velocity by this %
 	double moveX = 0;
 	double moveY = 0;
 	double moveZ = 0;
@@ -233,9 +233,9 @@ void BoidsController::avoidOthers(Fish& the_fish, std::vector <Shoal>& sholes) {
 			double dist = distance(the_fish, sholes[i].get()[j]);
 
 			if (dist != 0 && dist < minDistance) {
-				moveX += (the_fish.x - a_fish.x) / (dist * dist);
-				moveY += (the_fish.y - a_fish.y) / (dist * dist);
-				moveZ += (the_fish.z - a_fish.z) / (dist * dist);
+				moveX += (the_fish.x - a_fish.x) / dist;
+				moveY += (the_fish.y - a_fish.y) / dist;
+				moveZ += (the_fish.z - a_fish.z) / dist;
 			}
 
 

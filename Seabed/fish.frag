@@ -39,7 +39,7 @@ vec4 pointLight()
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
 	float specular = specAmount * specularLight;
 
-	return texture(tex0, texCoord) * (diffuse + ambient + specular) * vec4(fishColor, 1.0);
+	return (texture(tex0, texCoord) + vec4(fishColor, 1.0)/8)* (diffuse + ambient + specular);
 }
 
 void main()
