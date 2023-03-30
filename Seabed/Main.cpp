@@ -244,14 +244,13 @@ int main()
 	// Original code from the tutorial
 	Texture textures[]
 	{
-		Texture("sand.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
+		Texture("textures/sea_sand.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
 	};
 
 	Texture fish_textures[]
 	{
-		Texture("fish_texture.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
+		Texture("textures/fish_texture.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
 	};
-
 
 
 	Shader shaderProgram("default.vert", "default.frag");

@@ -138,22 +138,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="pop_cat.png">
+    <Image Include="textures\sand.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="sea_sand.png">
+    <Image Include="textures\sea_sand.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="brick.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="sand.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="planksSpec.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="planks.png">
+    <Image Include="textures\fish_texture.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
   </ItemGroup>

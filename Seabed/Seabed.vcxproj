@@ -61,12 +61,9 @@
     <ClInclude Include="VBO.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="brick.png" />
-    <Image Include="planks.png" />
-    <Image Include="planksSpec.png" />
-    <Image Include="pop_cat.png" />
-    <Image Include="sand.png" />
-    <Image Include="sea_sand.png" />
+    <Image Include="textures\fish_texture.png" />
+    <Image Include="textures\sand.png" />
+    <Image Include="textures\sea_sand.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
