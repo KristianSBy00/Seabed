@@ -19,6 +19,8 @@ public:
 	double rot_y;
 	double rot_z;
 
+	double swimCycle;
+
 	Fish();
 	Fish(double rot_x, double rot_y, double rot_z);
 

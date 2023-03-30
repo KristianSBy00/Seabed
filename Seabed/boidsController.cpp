@@ -46,6 +46,7 @@ void BoidsController::initBoids(double rot_x, double rot_y, double rot_z, int nu
 			fish_list[i][j].d_x = fRand(-0.1, 0.1);
 			fish_list[i][j].d_y = fRand(-0.1, 0.1);
 			fish_list[i][j].d_z = fRand(-0.1, 0.1);
+			fish_list[i][j].swimCycle = fRand(0, 7);
 
 			fish_list[i][j].rot_x = rot_x;
 			fish_list[i][j].rot_y = rot_y;
@@ -70,6 +71,7 @@ void BoidsController::initBoids(double rot_x, double rot_y, double rot_z, std::v
 			fish.d_x = fRand(-0.1, 0.1);
 			fish.d_y = fRand(-0.1, 0.1);
 			fish.d_z = fRand(-0.1, 0.1);
+			fish.swimCycle = fRand(0, 7);
 
 			fish.rot_x = rot_x;
 			fish.rot_y = rot_y;
@@ -80,7 +82,7 @@ void BoidsController::initBoids(double rot_x, double rot_y, double rot_z, std::v
 
 void BoidsController::keepWithinBounds(int school_id, int id, Fish fish_list[][NUMBER_FISH]) {
 	int margin = 3;
-	double turnFactor = 0.01;
+	double turnFactor = 0.025;
 
 	if (fish_list[school_id][id].x < -20 + margin) {
 		fish_list[school_id][id].d_x += turnFactor ;
@@ -104,8 +106,8 @@ void BoidsController::keepWithinBounds(int school_id, int id, Fish fish_list[][N
 
 
 void BoidsController::keepWithinBounds(Fish& fish) {
-	int margin = 3;
-	double turnFactor = 0.01;
+	int margin = 2;
+	double turnFactor = 0.0050;
 
 	if (fish.x < -20 + margin) {
 		fish.d_x += turnFactor;
@@ -113,7 +115,7 @@ void BoidsController::keepWithinBounds(Fish& fish) {
 	if (fish.x > 20 - margin) {
 		fish.d_x -= turnFactor;
 	}
-	if (fish.y < 0.0 + margin) { //HARD SURFICE
+	if (fish.y < 0.0 + margin + 5) { //HARD SURFICE
 		fish.d_y += turnFactor;
 	}
 	if (fish.y > 30 - margin) {
@@ -128,7 +130,7 @@ void BoidsController::keepWithinBounds(Fish& fish) {
 }
 
 void BoidsController::flyTowardsCenter(int school_id, int id, int numBoids, Fish fish_list[][NUMBER_FISH]) {
-	double centeringFactor = 0.0025; // adjust velocity by this %
+	double centeringFactor = 0.001; // adjust velocity by this %
 
 	double centerX = 0;
 	double centerY = 0;
@@ -158,7 +160,7 @@ void BoidsController::flyTowardsCenter(int school_id, int id, int numBoids, Fish
 
 
 void BoidsController::flyTowardsCenter(Fish& the_fish, std::vector<Fish>& shole) {
-	double centeringFactor = 0.0025; // adjust velocity by this %
+	double centeringFactor = 0.001; // adjust velocity by this %
 
 	double centerX = 0;
 	double centerY = 0;
@@ -217,8 +219,8 @@ void BoidsController::avoidOthers(int school_id, int id, int numBoids, Fish fish
 }
 
 void BoidsController::avoidOthers(Fish& the_fish, std::vector <Shoal>& sholes) {
-	int minDistance = 2; // The distance to stay away from other boids
-	double avoidFactor = 0.0035; // Adjust velocity by this %
+	double minDistance = 1.5; // The distance to stay away from other boids
+	double avoidFactor = 0.0025; // Adjust velocity by this %
 	double moveX = 0;
 	double moveY = 0;
 	double moveZ = 0;
@@ -307,7 +309,7 @@ void BoidsController::matchVelocity(Fish& the_fish, std::vector <Fish>& shole){
 }
 
 void BoidsController::limitSpeed(int school_id, int id, int numBoids, Fish fish_list[][NUMBER_FISH]) {
-	double speedLimit = 0.25;
+	double speedLimit = 0.05;
 
 	double speed = sqrt(
 		fish_list[school_id][id].d_x * fish_list[school_id][id].d_x + 
@@ -324,7 +326,7 @@ void BoidsController::limitSpeed(int school_id, int id, int numBoids, Fish fish_
 
 
 void BoidsController::limitSpeed(Fish& fish) {
-	double speedLimit = 0.25;
+	double speedLimit = 0.30;
 
 	double speed = sqrt(
 		fish.d_x * fish.d_x +
@@ -380,6 +382,8 @@ void BoidsController::update(std::vector<Shoal>& sholes) {
 			fish.x += fish.d_x;
 			fish.y += fish.d_y;
 			fish.z += fish.d_z;
+
+			fish.swimCycle += sqrt(fish.d_x * fish.d_x + fish.d_y * fish.d_y + fish.d_z * fish.d_z);
 		}
 	}
 }

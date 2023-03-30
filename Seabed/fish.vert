@@ -13,6 +13,7 @@ out vec2 texCoord;
 uniform mat4 camMatrix;
 uniform mat4 model;
 uniform mat4 tra;
+uniform float swimCycle;
 
 mat4 BuildTranslation(vec3 delta)
 {
@@ -31,7 +32,7 @@ void main()
 	texCoord = aTex;
 	vec3 scaledPos = aPos * 0.25;
 
-	mat4 nRot = rot * scaledPos.z;
+	mat4 nRot = rot * (scaledPos.z * 1.5);
 
 	nRot[0][0] = 1;
 	nRot[1][1] = 1;

@@ -1,8 +1,8 @@
 #include"Mesh.h"
 #include"boidsController.h"
+#include "obj.h"
 
 # define PI           3.14159265358979323846  /* pi */
-
 
 #include <vector>
 #include <stdio.h>
@@ -21,102 +21,6 @@ const unsigned int width = 1366;
 const unsigned int height = 768;
 
 std::vector <Shoal> sholes;
-
-void tokenize(std::string const& str, const char delim,
-	std::vector<std::string>& out)
-{
-	// construct a stream from the string 
-	std::stringstream ss(str);
-
-	std::string s;
-	while (std::getline(ss, s, delim)) {
-		out.push_back(s);
-	}
-}
-
-
-void read_obj(std::vector<Vertex>& vertices_for_func, std::vector<GLuint>& indices_for_func) {
-	string line;
-	ifstream myfile("fish.obj");
-
-	const char delim = ' ';
-	const char delim2 = '/';
-
-	std::vector<glm::vec3> vertices_buffer = std::vector<glm::vec3>();
-	std::vector<glm::vec3> norm_buffer = std::vector<glm::vec3>();
-	std::vector<glm::vec2> tex_buffer = std::vector<glm::vec2>();
-
-	std::vector<GLuint> norm_indices = std::vector<GLuint>();
-
-	if (myfile.is_open()){
-		while (getline(myfile, line)){
-			if (line.rfind("vn", 0) == 0) {
-				line.erase(0, 3); //remove "v "
-				glm::vec3 new_vec = glm::vec3();
-
-				std::vector<std::string> out;
-				tokenize(line, delim, out);
-
-				for (int i = 0; i < 3; i++) {
-					new_vec[i] = std::stof(out[i]);
-				}
-				norm_buffer.push_back(new_vec);
-			}
-
-			else if (line.rfind("vt", 0) == 0) {
-				line.erase(0, 3); //remove "v "
-				glm::vec2 new_vec = glm::vec2();
-
-				std::vector<std::string> out;
-				tokenize(line, delim, out);
-
-				for (int i = 0; i < 2; i++) {
-					new_vec[i] = std::stof(out[i]);
-				}
-				tex_buffer.push_back(new_vec);
-			}
-
-			else if (line.rfind("v", 0) == 0) {
-				line.erase(0, 2); //remove "v "
-
-				glm::vec3 new_vec = glm::vec3();
-
-				std::vector<std::string> out;
-				tokenize(line, delim, out);
-
-				for (int i = 0; i < 3; i++) {
-					new_vec[i] = std::stof(out[i]);
-				}
-				vertices_buffer.push_back(new_vec);
-			}
-
-			else if (line.rfind("f", 0) == 0) {
-				line.erase(0, 2); //remove "v "
-				std::vector<std::string> out;
-				tokenize(line, delim, out);
-				for (auto& s : out) {
-					std::vector<std::string> out2;
-					tokenize(s, delim2, out2);
-					unsigned int num;
-					num = stoi(out2[0]);
-					indices_for_func.push_back(num-1);
-
-					num = stoi(out2[1]);
-					norm_indices.push_back(num - 1);
-				}
-			}
-		}
-		myfile.close();
-
-		for (int i = 0; i < vertices_buffer.size(); i++) {
-			Vertex vertex_to_add = { vertices_buffer[i], glm::vec3(1.0f, 1.0f, 1.0f), norm_buffer[i], tex_buffer [i]};
-			vertices_for_func.push_back(vertex_to_add);
-		}
-	}
-	else cout << "Unable to open file";
-
-}
-
 
 Vertex vertices_triangle[] =
 { //     COORDINATES						/        COLORS          /    TexCoord   /        NORMALS       //
@@ -217,102 +121,6 @@ void print_ver(std::vector<Vertex>& print_ver) {
 }
 
 
-void newLoadOBJ(const char* path, std::vector<Vertex>& vertices_for_func, std::vector<GLuint>& indices_for_func) {
-	string line;
-	ifstream myfile(path);
-
-	const char delim = ' ';
-	const char delim2 = '/';
-
-	std::vector<GLuint> vertexIndices, uvIndices, normalIndices;
-	std::vector<glm::vec3> temp_vertices;
-	std::vector<glm::vec2> temp_uvs;
-	std::vector<glm::vec3> temp_normals;
-
-
-	if (myfile.is_open()) {
-		while (getline(myfile, line)) {
-			if (line.rfind("vn", 0) == 0) {
-				line.erase(0, 3); //remove "v "
-				glm::vec3 new_vec = glm::vec3();
-
-				std::vector<std::string> out;
-				tokenize(line, delim, out);
-
-				for (int i = 0; i < 3; i++) {
-					new_vec[i] = std::stof(out[i]);
-				}
-				temp_normals.push_back(new_vec);
-			}
-
-			else if (line.rfind("vt", 0) == 0) {
-				line.erase(0, 3); //remove "v "
-				glm::vec2 new_vec = glm::vec2();
-
-				std::vector<std::string> out;
-				tokenize(line, delim, out);
-
-				for (int i = 0; i < 2; i++) {
-					new_vec[i] = std::stof(out[i]);
-				}
-				temp_uvs.push_back(new_vec);
-			}
-
-			else if (line.rfind("v", 0) == 0) {
-				line.erase(0, 2); //remove "v "
-
-				glm::vec3 new_vec = glm::vec3();
-
-				std::vector<std::string> out;
-				tokenize(line, delim, out);
-
-				for (int i = 0; i < 3; i++) {
-					new_vec[i] = std::stof(out[i]);
-				}
-				temp_vertices.push_back(new_vec);
-			}
-
-			else if (line.rfind("f", 0) == 0) {
-				line.erase(0, 2); //remove "v "
-				std::vector<std::string> out;
-				tokenize(line, delim, out);
-				for (auto& s : out) {
-					std::vector<std::string> out2;
-					tokenize(s, delim2, out2);
-
-					unsigned int num;
-
-					num = stoi(out2[0]);
-					vertexIndices.push_back(num);
-
-					num = stoi(out2[2]);
-					normalIndices.push_back(num);
-
-					num = stoi(out2[1]);
-					uvIndices.push_back(num);
-				}
-			}
-		}
-		myfile.close();
-	}
-	// For each vertex of each triangle
-	for (unsigned int i = 0; i < vertexIndices.size(); i++) {
-		// Get the indices of its attributes
-		unsigned int vertexIndex = vertexIndices[i];
-		unsigned int uvIndex = uvIndices[i];
-		unsigned int normalIndex = normalIndices[i];
-
-		// Get the attributes thanks to the index
-		glm::vec3 vertex = temp_vertices[vertexIndex - 1];
-		glm::vec2 uv = temp_uvs[uvIndex - 1];
-		glm::vec3 normal = temp_normals[normalIndex - 1];
-
-		vertices_for_func.push_back(Vertex{ vertex , glm::vec3(1.0f, 1.0f, 1.0f) , normal, uv });
-		indices_for_func.push_back(i);
-
-	}
-}
-
 void print_vec3_list(std::vector<glm::vec3>& guy_to_print) {
 	for (int i = 0; i < guy_to_print.size(); i++) {
 		printf("<%f, %f, %f>\n", guy_to_print[i].x, guy_to_print[i].y, guy_to_print[i].z);
@@ -320,7 +128,7 @@ void print_vec3_list(std::vector<glm::vec3>& guy_to_print) {
 }
 
 
-void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 lightPos, std::vector<Shoal>& sholes_in, float rotation) {
+void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 lightPos, std::vector<Shoal>& sholes_in) {
 	glm::mat4 model;
 
 	for (int i = 0; i < sholes_in.size(); i++) {
@@ -339,10 +147,10 @@ void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 lightP
 
 			//"Animation"
 			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(sin(glm::radians(rotation*16))/8, 2.0 + sin(glm::radians(rotation * 8))/ 16, 0));
+			model = glm::translate(model, glm::vec3(sin(glm::radians(fish.swimCycle *8))/10, 2.0 + sin(glm::radians(fish.swimCycle * 8))/10, 0));
 
-			glm::mat4 rot = glm::rotate(cos(glm::radians(rotation*16))/8, glm::vec3(0, 1, 0));
-			rot = glm::rotate(rot, cos(glm::radians(rotation * 8)) / 16, glm::vec3(1, 0, 0));
+			glm::mat4 rot = glm::rotate((float)cos(glm::radians(fish.swimCycle *8))/8, glm::vec3(0, 1, 0));
+			rot = glm::rotate(rot,(float)cos(glm::radians(fish.swimCycle * 8)) / 16, glm::vec3(1, 0, 0));
 
 			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "rot"), 1, GL_FALSE, glm::value_ptr(rot));
 			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "tra"), 1, GL_FALSE, glm::value_ptr(model));
@@ -378,7 +186,7 @@ int main()
 	std::vector<GLuint> fishIndices = std::vector<GLuint>();
 
 	//read_obj(fishVertices, fishIndices);
-	newLoadOBJ("fish.obj", fishVertices, fishIndices);
+	loadOBJ("models/fish.obj", fishVertices, fishIndices);
 
 	//print_vec3_list(vertices);
 
@@ -509,24 +317,25 @@ int main()
 
 	double prevTime = glfwGetTime();
 
-	double timePassed = 0;
-	float rotation = 0;
-
 	// Main while loop
 	while (!glfwWindowShouldClose(window)){
+
+		double crntTime = glfwGetTime();
+		//60ps boids
+		if (crntTime - prevTime >= 1 / 60)
+		{
+			if (!pasuseBoids) {
+				boidsController.update(sholes);
+			}
+
+			prevTime = crntTime;
+		}
 
 		// Specify the color of the background
 		glClearColor(0.07f, 0.13f, 0.37f, 1.0f);
 		// Clean the back buffer and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-		double crntTime = glfwGetTime();
-		if (crntTime - prevTime >= 1/60)
-		{
-			rotation += 0.5f;
-			prevTime = crntTime;
-		}
 
 		// Handles camera inputs
 		camera.Inputs(window);
@@ -547,12 +356,9 @@ int main()
 
 		//fish.Draw(fishShader, camera);
 
-		if (!pasuseBoids) {
-			boidsController.update(sholes);
-		}
 
 		fishShader.Activate();
-		draw_fish(fish, fishShader, camera, lightPos, sholes, rotation);
+		draw_fish(fish, fishShader, camera, lightPos, sholes);
 
 		//objectModel = glm::mat4(1.0f);
 		//objectModel = glm::translate(objectModel, glm::vec3(sin(glm::radians(rotation*16))/8, 2.0 + sin(glm::radians(rotation * 8))/ 16, 0));

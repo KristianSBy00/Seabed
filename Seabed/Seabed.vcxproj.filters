@@ -19,7 +19,7 @@
     <Filter Include="Resource Files\Models">
       <UniqueIdentifier>{42172cbc-2570-4e71-9b18-2ca4f7f4a867}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Models\Shaders">
+    <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{1b5ecd4e-cf4f-480d-93df-dd51d8c696cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -63,37 +63,40 @@
     <ClCompile Include="Shoal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="obj.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.vert">
-      <Filter>Resource Files\Models\Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="default.frag">
-      <Filter>Resource Files\Models\Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="light.vert">
-      <Filter>Resource Files\Models\Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="light.frag">
-      <Filter>Resource Files\Models\Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="floor.vert">
-      <Filter>Resource Files\Models\Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="floor.frag">
-      <Filter>Resource Files\Models\Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="fish.frag">
-      <Filter>Resource Files\Models\Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="fish.vert">
-      <Filter>Resource Files\Models\Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="new.frag">
-      <Filter>Resource Files\Models\Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="new.vert">
-      <Filter>Resource Files\Models\Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -128,6 +131,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tiny_obj_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="obj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
