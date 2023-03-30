@@ -76,13 +76,27 @@ double Fish::CalcPitchRad() {
 	return pitch;
 }
 
-glm::mat4 Fish::get_rotation_mat() {
-	double hor_angle = CalcHeadingRad();
-	double pitch = CalcPitchRad();
 
-	glm::mat4 rot_mat_x = glm::rotate(float(rot_x - pitch), glm::vec3(1.0, 0.0, 0.0));
-	glm::mat4 rot_mat_y = glm::rotate(float(hor_angle + rot_y), glm::vec3(0.0, 1.0, 0.0));
-	glm::mat4 rot_mat_z = glm::rotate(float(rot_z), glm::vec3(0.0, 0.0, 1.0));
+float Fish::getRotX() {
+	return float(rot_x - CalcPitchRad());
+}
+
+float Fish::getRotY() {
+	return float(rot_y + CalcHeadingRad());
+}
+
+float Fish::getRotZ() {
+	return float(rot_z);
+}
+
+
+glm::mat4 Fish::get_rotation_mat() {
+	//double hor_angle = CalcHeadingRad();
+	//double pitch = CalcPitchRad();
+
+	glm::mat4 rot_mat_x = glm::rotate(getRotX(), glm::vec3(1.0, 0.0, 0.0));
+	glm::mat4 rot_mat_y = glm::rotate(getRotY(), glm::vec3(0.0, 1.0, 0.0));
+	glm::mat4 rot_mat_z = glm::rotate(getRotZ(), glm::vec3(0.0, 0.0, 1.0));
 
 	return rot_mat_y * rot_mat_x * rot_mat_z;
 }

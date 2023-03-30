@@ -60,10 +60,10 @@ GLuint indices_triangle[] =
 // Vertices coordinates
 Vertex vertices_floor[] =
 { //               COORDINATES           /            COLORS          /           NORMALS         /       TEXTURE COORDINATES    //
-	Vertex{glm::vec3(-20.0f, 0.0f,  20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(0.0f, 0.0f)},
-	Vertex{glm::vec3(-20.0f, 0.0f, -20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3(20.0f, 0.0f, -20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(1.0f, 1.0f)},
-	Vertex{glm::vec3(20.0f, 0.0f,  20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(1.0f, 0.0f)}
+	Vertex{glm::vec3(-20.0f, -0.2f,  20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(0.0f, 0.0f)},
+	Vertex{glm::vec3(-20.0f, -0.2f, -20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(0.0f, 1.0f)},
+	Vertex{glm::vec3(20.0f, -0.2f, -20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(1.0f, 1.0f)},
+	Vertex{glm::vec3(20.0f, -0.2f,  20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(1.0f, 0.0f)}
 };
 
 // Indices for vertices order
@@ -173,10 +173,27 @@ void draw_fish_smp(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 li
 
 bool pasuseBoids = false;
 
+bool fish_cam = false;
+
+int shoalId = 0;
+int fsihId = 0;
+
+Fish dummy = Fish();
+
+Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f), &dummy);
+
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
 		pasuseBoids = !pasuseBoids;
+
+	if (key == GLFW_KEY_F && action == GLFW_PRESS) { //Enter fish cam
+		camera.fishCam = true;
+	}
+
+	if (key == GLFW_KEY_Q && action == GLFW_PRESS) //Quit fish cam
+		camera.fishCam = false;
 }
 
 
@@ -209,6 +226,8 @@ int main()
 
 		sholes.push_back(shoal);
 	}
+
+	camera.setFish(&sholes[0].get()[0]);
 
 	// Initialize GLFW
 	glfwInit();
@@ -308,7 +327,7 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	// Creates camera object
-	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
+
 
 	BoidsController boidsController = BoidsController();
 	//boidsController.initBoids(0, PI / 2, PI / 2, numBoids, fish_list);

@@ -32,5 +32,9 @@ public:
 	glm::mat4 get_model_mat();
 	glm::vec3 get_rot_vec();
 	glm::vec3 get_position_vec();
+
+	float getRotX();
+	float getRotY();
+	float getRotZ();
 };
 #endif
