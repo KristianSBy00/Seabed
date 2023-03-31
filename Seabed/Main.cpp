@@ -147,10 +147,10 @@ void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 lightP
 
 			//"Animation"
 			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(sin(glm::radians(fish.swimCycle *8))/10, 2.0 + sin(glm::radians(fish.swimCycle * 8))/10, 0));
+			model = glm::translate(model, glm::vec3(sin(glm::radians(fish.swimCycle *16))/16, sin(glm::radians(fish.swimCycle * 16))/ 16, 0));
 
-			glm::mat4 rot = glm::rotate((float)cos(glm::radians(fish.swimCycle *8))/8, glm::vec3(0, 1, 0));
-			rot = glm::rotate(rot,(float)cos(glm::radians(fish.swimCycle * 8)) / 16, glm::vec3(1, 0, 0));
+			glm::mat4 rot = glm::rotate((float)cos(glm::radians(fish.swimCycle *16))/8, glm::vec3(0, 1, 0));
+			rot = glm::rotate(rot,(float)cos(glm::radians(fish.swimCycle * 16)) / 16, glm::vec3(1, 0, 0));
 
 			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "rot"), 1, GL_FALSE, glm::value_ptr(rot));
 			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "tra"), 1, GL_FALSE, glm::value_ptr(model));

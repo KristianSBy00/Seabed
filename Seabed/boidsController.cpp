@@ -383,7 +383,7 @@ void BoidsController::update(std::vector<Shoal>& sholes) {
 			fish.y += fish.d_y;
 			fish.z += fish.d_z;
 
-			fish.swimCycle += sqrt(fish.d_x * fish.d_x + fish.d_y * fish.d_y + fish.d_z * fish.d_z);
+			fish.swimCycle += sqrt(fish.d_x * fish.d_x + fish.d_y * fish.d_y + fish.d_z * fish.d_z) * 5;
 		}
 	}
 }

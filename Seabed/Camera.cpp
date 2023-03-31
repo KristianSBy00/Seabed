@@ -22,7 +22,7 @@ void Camera::updateMatrix(float FOVdeg, float nearPlane, float farPlane)
 
 	if (fishCam) {
 		printf("fish x: %d\n", fish->x);
-		glm::vec3 fishPosition = glm::vec3(fish->x, fish->y, fish->z);
+		glm::vec3 fishPosition = glm::vec3(fish->x, fish->y, fish->z + 0.75);
 		view = glm::lookAt(fishPosition, fishPosition + Orientation, Up);
 	}
 	else {
@@ -83,6 +83,7 @@ void Camera::Inputs(GLFWwindow* window)
 
 	glm::vec3 newOrientation;
 
+	/*
 	if (fishCam) {
 		float fishRotX = fish->getRotX();
 
@@ -99,6 +100,7 @@ void Camera::Inputs(GLFWwindow* window)
 
 		return;
 	}
+	*/
 
 
 	// Handles mouse inputs

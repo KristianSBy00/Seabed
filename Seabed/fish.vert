@@ -32,14 +32,14 @@ void main()
 	texCoord = aTex;
 	vec3 scaledPos = aPos * 0.25;
 
-	mat4 nRot = rot * (scaledPos.z * 1.5);
+	mat4 nRot = rot * (scaledPos.z * scaledPos.z * 2);
 
 	nRot[0][0] = 1;
 	nRot[1][1] = 1;
 	nRot[2][2] = 1;
 	nRot[3][3] = 1;
 
-	mat4 even_trans = BuildTranslation(vec3(0, 0, 0.5));
+	mat4 even_trans = BuildTranslation(vec3(0, 0, 0));
 
 	crntPos = vec3(camMatrix * vec4(scaledPos, 1.0f));
 
