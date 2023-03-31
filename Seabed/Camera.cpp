@@ -18,10 +18,7 @@ void Camera::updateMatrix(float FOVdeg, float nearPlane, float farPlane)
 
 	// Makes camera look in the right direction from the right position
 
-	printf("fish cam: %d\n", fishCam);
-
 	if (fishCam) {
-		printf("fish x: %d\n", fish->x);
 		glm::vec3 fishPosition = glm::vec3(fish->x, fish->y, fish->z + 0.75);
 		view = glm::lookAt(fishPosition, fishPosition + Orientation, Up);
 	}
