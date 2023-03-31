@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Desktop\YoutubeOpenGL 13 - Model Loading\glad.c" />
     <ClCompile Include="boidsController.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="Fish.cpp" />
+    <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="obj.cpp" />
@@ -122,8 +122,8 @@
     <LibraryPath>C:\Users\Kristian\source\repos\Seabed\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Kristian\source\repos\Seabed\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Kristian\source\repos\Seabed\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\krist\source\repos\Seabed\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\krist\source\repos\Seabed\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
