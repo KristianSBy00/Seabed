@@ -1,6 +1,7 @@
 #include"Mesh.h"
 #include"boidsController.h"
 #include "obj.h"
+#include "Kelp.h"
 
 # define PI           3.14159265358979323846  /* pi */
 
@@ -10,95 +11,32 @@
 #include <cstring>
 
 #include <glm/glm.hpp>
-#include "tiny_obj_loader.h"
 #include <cstdio>
 #include <stdio.h>
 
 
 using namespace std;
-
 const unsigned int width = 1366;
 const unsigned int height = 768;
 
-std::vector <Shoal> sholes;
 
-Vertex vertices_triangle[] =
-{ //     COORDINATES						/        COLORS          /    TexCoord   /        NORMALS       //
-		Vertex{glm::vec3(-0.1f, 0.0f, 0.1f),	glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f)}, // Bottom side
-		Vertex{glm::vec3(-0.1f, 0.0f, -0.1f),	glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 5.0f)}, // Bottom side
-		Vertex{glm::vec3(0.1f, 0.0f, -0.1f),	glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(5.0f, 5.0f)}, // Bottom side
-		Vertex{glm::vec3(0.1f, 0.0f, 0.1f),		glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(5.0f, 0.0f)}, // Bottom side
-
-		Vertex{glm::vec3(-0.1f, 0.0f, 0.1f),	glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-0.8f, 0.5f, 0.0f), glm::vec2(0.0f, 0.0f)}, // Left Side
-		Vertex{glm::vec3(-0.1f, 0.0f, -0.1f),	glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-0.8f, 0.5f, 0.0f), glm::vec2(5.0f, 0.0f)}, // Left Side
-		Vertex{glm::vec3(0.0f, 0.5f, 0.0f),		glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-0.8f, 0.5f, 0.0f), glm::vec2(2.5f, 5.0f)}, // Left Side
-
-		Vertex{glm::vec3(-0.1f, 0.0f, -0.1f),	glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.5f, -0.8f), glm::vec2(5.0f, 0.0f)}, // Non-facing side
-		Vertex{glm::vec3(0.1f, 0.0f, -0.1f),	glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.5f, -0.8f), glm::vec2(0.0f, 0.0f)}, // Non-facing side
-		Vertex{glm::vec3(0.0f, 0.5f, 0.0f),		glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.5f, -0.8f), glm::vec2(2.5f, 5.0f)}, // Non-facing side
-
-		Vertex{glm::vec3(0.1f, 0.0f, -0.1f),	glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.8f, 0.5f, 0.0f), glm::vec2(0.0f, 0.0f)}, // Right side
-		Vertex{glm::vec3(0.1f, 0.0f, 0.1f),		glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.8f, 0.5f, 0.0f), glm::vec2(5.0f, 0.0f)}, // Right side
-		Vertex{glm::vec3(0.0f, 0.5f, 0.0f),		glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.8f, 0.5f, 0.0f), glm::vec2(2.5f, 5.0f)}, // Right side
-
-		Vertex{glm::vec3(0.1f, 0.0f, 0.1f),		glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.5f, 0.8f), glm::vec2(5.0f, 0.0f)}, // Facing side
-		Vertex{glm::vec3(-0.1f, 0.0f, 0.1f),	glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.5f, 0.8f), glm::vec2(0.0f, 0.0f)}, // Facing side
-		Vertex{glm::vec3(0.0f, 0.5f, 0.0f),		glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.5f, 0.8f), glm::vec2(2.5f, 5.0f)}  // Facing side
-};
-
-GLuint indices_triangle[] =
-{
-	0, 1, 2, // Bottom side
-	0, 2, 3, // Bottom side
-	4, 6, 5, // Left side
-	7, 9, 8, // Non-facing side
-	10, 12, 11, // Right side
-	13, 15, 14 // Facing side
-};
-
-
-// Vertices coordinates
 Vertex vertices_floor[] =
 { //               COORDINATES           /            COLORS          /           NORMALS         /       TEXTURE COORDINATES    //
-	Vertex{glm::vec3(-20.0f, -0.2f,  20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(0.0f, 0.0f)},
-	Vertex{glm::vec3(-20.0f, -0.2f, -20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3(20.0f, -0.2f, -20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(1.0f, 1.0f)},
-	Vertex{glm::vec3(20.0f, -0.2f,  20.0f),		glm::vec3(0.0f, 1.0f, 0.0f),	glm::vec3(1.0f, 1.0f, 1.0f),	glm::vec2(1.0f, 0.0f)}
+	Vertex{glm::vec3(-30.0f, 0.0f, 30.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
+	Vertex{glm::vec3(-30.0f, 0.0f, -30.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
+	Vertex{glm::vec3(30.0f, 0.0f, -30.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
+	Vertex{glm::vec3(30.0f, 0.0f,  30.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f)}
 };
 
+
+
 // Indices for vertices order
-GLuint indices[] = {
+GLuint indices_floor[] =
+{
 	0, 1, 2,
 	0, 2, 3
 };
 
-Vertex lightVertices[] =
-{ //     COORDINATES     //
-	Vertex{glm::vec3(-1.0f, -1.0f,  1.0f)},
-	Vertex{glm::vec3(-1.0f, -1.0f, -1.0f)},
-	Vertex{glm::vec3(1.0f, -1.0f, -1.0f)},
-	Vertex{glm::vec3(1.0f, -1.0f,  1.0f)},
-	Vertex{glm::vec3(-1.0f,  1.0f,  1.0f)},
-	Vertex{glm::vec3(-1.0f,  1.0f, -1.0f)},
-	Vertex{glm::vec3(1.0f,  1.0f, -1.0f)},
-	Vertex{glm::vec3(1.0f,  1.0f,  1.0f)}
-};
-
-GLuint lightIndices[] =
-{
-	0, 1, 2,
-	0, 2, 3,
-	0, 4, 7,
-	0, 7, 3,
-	3, 7, 6,
-	3, 6, 2,
-	2, 6, 5,
-	2, 5, 1,
-	1, 5, 4,
-	1, 4, 0,
-	4, 5, 6,
-	4, 6, 7
-};
 
 
 void print_ind(std::vector<GLuint>& print_ind_var) {
@@ -128,7 +66,25 @@ void print_vec3_list(std::vector<glm::vec3>& guy_to_print) {
 }
 
 
-void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 lightPos, std::vector<Shoal>& sholes_in) {
+void expandFloor(std::vector<Vertex>& base, std::vector<Vertex>& out) {
+	for (int i = -3; i < 3; i++) {
+		for (int j = -3; j < 3; j++) {
+			for (int k = 0; k < base.size(); k++) {
+
+				glm::vec3 vertex	= base[k].position;
+				glm::vec3 clor		= base[k].color;
+				glm::vec3 normal	= base[k].color;
+				glm::vec2 uv		= base[k].texUV;
+
+				glm::vec3 newVertex = glm::vec3(vertex.x + i*10, vertex.y, vertex.z + j*10);
+				out.push_back(Vertex{ newVertex, clor, normal, uv });
+			}
+		}	
+	}
+}
+
+
+void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, std::vector<Shoal>& sholes_in) {
 	glm::mat4 model;
 
 	for (int i = 0; i < sholes_in.size(); i++) {
@@ -143,37 +99,63 @@ void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 lightP
 			model = fish.get_model_mat();
 			glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"), color.x, color.y, color.z);
 			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			glUniform3f(glGetUniformLocation(fishShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+			//glUniform3f(glGetUniformLocation(fishShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
 			//"Animation"
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(sin(glm::radians(fish.swimCycle *16))/16, sin(glm::radians(fish.swimCycle * 16))/ 16, 0));
+			//model = glm::mat4(1.0f);
+			glm::mat4 translation = glm::translate(glm::vec3(sin(glm::radians(fish.swimCycle *16))/16, sin(glm::radians(fish.swimCycle * 16))/ 16, 0));
 
-			glm::mat4 rot = glm::rotate((float)cos(glm::radians(fish.swimCycle *16))/8, glm::vec3(0, 1, 0));
-			rot = glm::rotate(rot,(float)cos(glm::radians(fish.swimCycle * 16)) / 16, glm::vec3(1, 0, 0));
+			glm::mat4 rot_y = glm::rotate((float)cos(glm::radians(fish.swimCycle * 32)) / 4,  glm::vec3(0, 1, 0));
+			glm::mat4 rot_x = glm::rotate((float)cos(glm::radians(fish.swimCycle * 16)) / 16, glm::vec3(1, 0, 0));
+			glm::mat4 rot_z = glm::rotate((float)cos(glm::radians(fish.swimCycle * 32)) / 8, glm::vec3(0, 0, 1));
 
-			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "rot"), 1, GL_FALSE, glm::value_ptr(rot));
-			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "tra"), 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "rot_y"), 1, GL_FALSE, glm::value_ptr(rot_y));
+			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "rot_x"), 1, GL_FALSE, glm::value_ptr(rot_x));
+			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "rot_z"), 1, GL_FALSE, glm::value_ptr(rot_z));
+			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "trans"), 1, GL_FALSE, glm::value_ptr(translation));
 
 			fishMesh.Draw(fishShader, camera);
 		}
 	}
 }
 
-void draw_fish_smp(Mesh fishMesh, Shader fishShader, Camera camera, glm::vec3 lightPos) {
-	glm::vec3 pos = glm::vec3(0.0f, 5.0f, 0.0f);
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, pos);
 
-	glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"),	1.0f, 1.0f, 1.0f);
-	glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-	glUniform3f(glGetUniformLocation(fishShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-	fishMesh.Draw(fishShader, camera);
+void drawKelp(Mesh kelpMesh, Shader kelpShader, Camera camera, std::vector<Kelp>& kelpIn, float time) {
+	for (int i = 0; i < kelpIn.size(); i++) {
+		//glm::mat4 rot_x = glm::rotate((float)cos(glm::radians(kelpIn[i].cycle * 8))/ 16 + 1/4, glm::vec3(1, 0, 0));
+		//glm::mat4 rot_y = glm::rotate((float)cos(glm::radians(kelpIn[i].cycle * 1))/ 4, glm::vec3(0, 1, 0));
+		//glm::mat4 rot_z = glm::rotate((float)cos(glm::radians(kelpIn[i].cycle * 8))/ 16 + 1/4, glm::vec3(0, 0, 1));
+
+		glm::mat4 rot_x = glm::rotate((float)sin(glm::radians(kelpIn[i].cycle * 8)) / 8, glm::vec3(1, 0, 0));
+		glm::mat4 rot_y = glm::rotate((float)cos(glm::radians(kelpIn[i].cycle * 4)) / 4, glm::vec3(0, 1, 0));
+		glm::mat4 rot_z = glm::rotate((float)cos(glm::radians(kelpIn[i].cycle * 8)) / 8, glm::vec3(0, 0, 1));
+
+		glm::mat4 currentRot = glm::rotate((float)sin(glm::radians(kelpIn[i].cycle * 8)) / 8 + 1.f/2, glm::vec3(-1, 0, 1));
+
+		glUniformMatrix4fv(glGetUniformLocation(kelpShader.ID, "rot_x"), 1, GL_FALSE, glm::value_ptr(rot_x));
+		glUniformMatrix4fv(glGetUniformLocation(kelpShader.ID, "rot_y"), 1, GL_FALSE, glm::value_ptr(rot_y));
+		glUniformMatrix4fv(glGetUniformLocation(kelpShader.ID, "rot_z"), 1, GL_FALSE, glm::value_ptr(rot_z));
+		glUniformMatrix4fv(glGetUniformLocation(kelpShader.ID, "currentRot"), 1, GL_FALSE, glm::value_ptr(currentRot));
+
+		glm::mat4 baseRot = glm::rotate( (float) kelpIn[i].rotation, glm::vec3(0, 1, 0) );
+		float size		= kelpIn[i].size;
+		float lenght	= kelpIn[i].lenght;
+		glm::mat4 translation = glm::translate(kelpIn[i].pos);
+
+		glUniformMatrix4fv(glGetUniformLocation(kelpShader.ID, "baseRot"), 1, GL_FALSE, glm::value_ptr(baseRot));
+		glUniform1f(glGetUniformLocation(kelpShader.ID, "size"), size);
+		glUniform1f(glGetUniformLocation(kelpShader.ID, "lenght"), lenght);
+		glUniformMatrix4fv(glGetUniformLocation(kelpShader.ID, "trans"), 1, GL_FALSE, glm::value_ptr(translation));
+		glUniform1f(glGetUniformLocation(kelpShader.ID, "time"), time);
+		kelpMesh.Draw(kelpShader, camera);
+	}
 }
 
 bool pasuseBoids = false;
 
 bool fish_cam = false;
+
+float kelpCycle = 0;
 
 int shoalId = 0;
 int fsihId = 0;
@@ -182,9 +164,58 @@ Fish dummy = Fish();
 
 Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f), &dummy);
 
+BoidsController boidsController = BoidsController();
+
+std::vector <Shoal> sholes = std::vector<Shoal>();
+
+std::vector <Kelp> theKelp = std::vector<Kelp>();
+
+bool is_left_down = false;
+bool is_right_down = false;
+
+bool is_V_down = false;
+bool is_A_down = false;
+bool is_S_down = false;
+bool is_C_down = false;
+
+int shoal_index = 0;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+	//Shoal index
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS)	shoal_index = 0;
+	if (key == GLFW_KEY_2 && action == GLFW_PRESS)	shoal_index = 1;
+	if (key == GLFW_KEY_3 && action == GLFW_PRESS)	shoal_index = 2;
+
+	//Shoal holdowns
+	if (key == GLFW_KEY_LEFT)	is_left_down	= action == GLFW_PRESS;
+	if (key == GLFW_KEY_RIGHT)	is_right_down	= action == GLFW_PRESS;
+
+	if (key == GLFW_KEY_V)		is_V_down		= action == GLFW_PRESS;
+	if (key == GLFW_KEY_A)		is_A_down		= action == GLFW_PRESS;
+	if (key == GLFW_KEY_S)		is_S_down		= action == GLFW_PRESS;
+	if (key == GLFW_KEY_C)		is_C_down		= action == GLFW_PRESS;
+
+
+
+	//Boids controll
+	if (is_V_down) {
+		if (is_right_down)		sholes[shoal_index].incrementVisualRange();
+		else if (is_left_down)	sholes[shoal_index].decrementVisualRange();
+	}
+	if (is_A_down) {
+		if (is_right_down)		sholes[shoal_index].incrementAlignment();
+		else if (is_left_down)	sholes[shoal_index].decrementAlignment();
+	}
+	if (is_S_down) {
+		if (is_right_down)		sholes[shoal_index].incrementSeparation();
+		else if (is_left_down)	sholes[shoal_index].decrementSeparation();
+	}
+	if (is_C_down) {
+		if (is_right_down)		sholes[shoal_index].incrementCoherence();
+		else if (is_left_down)	sholes[shoal_index].decrementCoherence();
+	}
+
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
 		pasuseBoids = !pasuseBoids;
 
@@ -202,14 +233,37 @@ int main()
 	std::vector<Vertex> fishVertices = std::vector<Vertex>();
 	std::vector<GLuint> fishIndices = std::vector<GLuint>();
 
-	//read_obj(fishVertices, fishIndices);
+	std::vector<Vertex> rockVertices = std::vector<Vertex>();
+	std::vector<GLuint> rockIndices = std::vector<GLuint>();
+
+	std::vector<Vertex> kelpVertices = std::vector<Vertex>();
+	std::vector<GLuint> kelpIndices = std::vector<GLuint>();
+
+	std::vector<Vertex> boxVertices = std::vector<Vertex>();
+	std::vector<GLuint> boxIndices = std::vector<GLuint>();
+
+	std::vector<Vertex> sunVertices = std::vector<Vertex>();
+	std::vector<GLuint> sunIndices = std::vector<GLuint>();
+
+	std::vector <Vertex> floorVertices(vertices_floor, vertices_floor + sizeof(vertices_floor) / sizeof(Vertex));
+	std::vector <GLuint> floorIndices(indices_floor, indices_floor + sizeof(indices_floor) / sizeof(GLuint));
+
 	loadOBJ("models/fish.obj", fishVertices, fishIndices);
+	loadOBJ("models/bigrock.obj", rockVertices, rockIndices);
+	loadOBJ("models/kelp.obj", kelpVertices, kelpIndices);
+	loadOBJ("models/theBox.obj", boxVertices, boxIndices);
+	loadOBJ("models/golf.obj", sunVertices, sunIndices);
+	//loadOBJ("models/floorTile.obj", floorVertices, floorIndices);
 
-	//print_vec3_list(vertices);
+	//print_ver(floorVertices);
 
-	//print_ver(fishVertices);
+	//std::vector<glm::vec3> obsticles = std::vector<glm::vec3>();
 
-	std::vector <Shoal> sholes = std::vector<Shoal>();
+	for (int i = 0; i < rockVertices.size(); i++) {
+		boidsController.addObsticle(rockVertices[i].position);
+	}
+
+	boidsController.calcBound();
 
 	glm::vec3 colors[] = {
 		glm::vec3(1.0, 0.0, 0.0),
@@ -220,11 +274,16 @@ int main()
 
 		Shoal shoal = Shoal(colors[i]);
 
-		for (int j = 0; j < 150; j++) {
+		for (int j = 0; j < 100; j++) {
 			shoal.add(Fish());
 		}
 
 		sholes.push_back(shoal);
+	}
+
+
+	for (int i = 0; i < 1000; i++) {
+		theKelp.push_back(Kelp(boidsController.getBound(), theKelp));
 	}
 
 	camera.setFish(&sholes[0].get()[0]);
@@ -234,8 +293,8 @@ int main()
 
 	// Tell GLFW what version of OpenGL we are using 
 	// In this case we are using OpenGL 3.3
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	// Tell GLFW we are using the CORE profile
 	// So that means we only have the modern functions
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -261,78 +320,205 @@ int main()
 
 
 	// Original code from the tutorial
-	Texture textures[]
+	Texture floorTextures[]
 	{
-		Texture("textures/sea_sand.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
+		Texture("textures/Stylized_Sand_001_basecolor.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
+		Texture("textures/Stylized_Sand_001_height.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/Stylized_Sand_001_normal.png", "normals", 2, GL_RGBA, GL_UNSIGNED_BYTE),
+		Texture("textures/disortionmap.png", "dissortion", 3, GL_RED, GL_UNSIGNED_BYTE),
+	};
+
+	Texture rockTextures[]
+	{
+		Texture("textures/Sea_Rock_001_BaseColor.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
+		Texture("textures/Sea_Rock_001_Height.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/Sea_Rock_001_Normal.png", "normals", 2, GL_RGBA, GL_UNSIGNED_BYTE),
+		Texture("textures/disortionmap.png", "dissortion", 3, GL_RED, GL_UNSIGNED_BYTE),
+	};
+
+	Texture kelpTextures[]
+	{
+		Texture("textures/Coral_002_basecolor.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
+		Texture("textures/Coral_002_height.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/Coral_002_normal.png", "normals", 2, GL_RGBA, GL_UNSIGNED_BYTE),
+		Texture("textures/disortionmap.png", "dissortion", 3, GL_RED, GL_UNSIGNED_BYTE),
 	};
 
 	Texture fish_textures[]
 	{
 		Texture("textures/fish_texture.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
+		//Dummy textures that wont be used
+		Texture("textures/Coral_002_height.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/Coral_002_normal.png", "normals", 2, GL_RGBA, GL_UNSIGNED_BYTE),
+		Texture("textures/disortionmap.png", "dissortion", 3, GL_RED, GL_UNSIGNED_BYTE),
 	};
 
+	Texture surfaceTextures[]
+	{
+		Texture("textures/fish_texture.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
+		Texture("textures/Coral_002_height.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/NormalMap.png", "normals", 2, GL_RGBA, GL_UNSIGNED_BYTE),
+		Texture("textures/disortionmap.png", "dissortion", 3, GL_RED, GL_UNSIGNED_BYTE),
+	};
 
-	Shader shaderProgram("default.vert", "default.frag");
-	std::vector <Vertex> verts(vertices_floor, vertices_floor + sizeof(vertices_floor) / sizeof(Vertex));
-	std::vector <GLuint> ind(indices, indices + sizeof(indices) / sizeof(GLuint));
-	std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
+	Texture cus[]
+	{
+		Texture("textures/caustics/nr1.png", "caustics", 4, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr2.png", "caustics", 5, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr3.png", "caustics", 6, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr4.png", "caustics", 7, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr5.png", "caustics", 8, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr6.png", "caustics", 9, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr7.png", "caustics", 10, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr8.png", "caustics", 11, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr9.png", "caustics", 12, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr10.png", "caustics", 13, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr11.png", "caustics", 14, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr12.png", "caustics", 15, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr13.png", "caustics", 16, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr14.png", "caustics", 17, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr15.png", "caustics", 18, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr16.png", "caustics", 19, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr17.png", "caustics", 20, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr18.png", "caustics", 21, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr19.png", "caustics", 22, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr20.png", "caustics", 23, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr21.png", "caustics", 24, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr22.png", "caustics", 25, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr23.png", "caustics", 26, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr24.png", "caustics", 27, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr25.png", "caustics", 28, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr26.png", "caustics", 29, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr27.png", "caustics", 30, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr28.png", "caustics", 31, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr29.png", "caustics", 32, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr30.png", "caustics", 33, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr31.png", "caustics", 34, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("textures/caustics/nr32.png", "caustics", 35, GL_RED, GL_UNSIGNED_BYTE),
+	};
 
-	std::vector <Texture> fish_tex(fish_textures, fish_textures + sizeof(fish_textures) / sizeof(Texture));
+	Texture norms[]
+	{
+		Texture("textures/surfaceNormals/nr1.png", "caustics", 36, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr2.png", "caustics", 37, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr3.png", "caustics", 38, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr4.png", "caustics", 39, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr5.png", "caustics", 40, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr6.png", "caustics", 41, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr7.png", "caustics", 42, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr8.png", "caustics", 43, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr9.png", "caustics", 44, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr10.png", "caustics", 45, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr11.png", "caustics", 46, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr12.png", "caustics", 47, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr13.png", "caustics", 48, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr14.png", "caustics", 49, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr15.png", "caustics", 50, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr16.png", "caustics", 51, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr17.png", "caustics", 52, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr18.png", "caustics", 53, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr19.png", "caustics", 54, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr20.png", "caustics", 55, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr21.png", "caustics", 56, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr22.png", "caustics", 57, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr23.png", "caustics", 58, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr24.png", "caustics", 59, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr25.png", "caustics", 60, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr26.png", "caustics", 61, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr27.png", "caustics", 62, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr28.png", "caustics", 63, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr29.png", "caustics", 64, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr30.png", "caustics", 65, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr31.png", "caustics", 66, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("textures/surfaceNormals/nr32.png", "caustics", 67, GL_RGB, GL_UNSIGNED_BYTE),
+	};
 
-	//std::vector <Texture> fish_tex(tex, tex + sizeof(tex) / sizeof(Texture));
+	std::vector<Texture>	floorTex(floorTextures, floorTextures + sizeof(floorTextures) / sizeof(Texture));
+	std::vector<Texture>	fish_tex(fish_textures, fish_textures + sizeof(fish_textures) / sizeof(Texture));
+	std::vector<Texture>	rockTex(rockTextures, rockTextures + sizeof(rockTextures) / sizeof(Texture));
+	std::vector<Texture>	kelpTex(kelpTextures, kelpTextures + sizeof(kelpTextures) / sizeof(Texture));
+	std::vector<Texture>	surfaceTex(surfaceTextures, surfaceTextures + sizeof(surfaceTextures) / sizeof(Texture));
+	std::vector<Texture>	nromalTex(norms, norms + sizeof(norms) / sizeof(Texture));
+
+	std::vector<Texture>	castics(cus, cus + sizeof(cus) / sizeof(Texture));
+
+	std::vector<Texture>    emptTex = std::vector<Texture>();
+
+	Shader floorShader("default.vert", "default.frag");
+	Shader rockShader("default.vert", "default.frag");
+	Shader fishShader("fish.vert", "fish.frag");
+	Shader kelpShader("kelp.vert", "kelp.frag");
+	Shader waterSurfaceShader("waterSurface.vert", "waterSurface.frag");
+	Shader sunShader("sun.vert", "sun.frag");
 
 	// Create floor mesh
-	Mesh floor(verts, ind, tex);
+	Mesh waterSurface = Mesh(floorVertices, floorIndices, surfaceTex, castics, nromalTex);
+	Mesh floor = Mesh(floorVertices, floorIndices, floorTex, castics, nromalTex);
+	Mesh rock = Mesh(rockVertices, rockIndices, rockTex, castics, nromalTex);
+	Mesh fish = Mesh(fishVertices, fishIndices, fish_tex, castics, nromalTex);
+	Mesh kelp = Mesh(kelpVertices, kelpIndices, kelpTex, castics, nromalTex);
+	Mesh sun = Mesh(sunVertices, sunIndices, floorTex, castics, nromalTex);
+	//Mesh box = Mesh(boxVertices, boxIndices, emptTex, castics);
 
-	//Fishe
-	//Shader fishShader("fish.vert", "fish.frag");
-	Shader fishShader("fish.vert", "fish.frag");
 
-	Mesh fish(fishVertices, fishIndices, fish_tex);
+	std::vector<Mesh> meshList = std::vector<Mesh>();
 
-	Shader lightShader("light.vert", "light.frag");
-	std::vector<Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
-	std::vector<GLuint> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(GLuint));
-	Mesh light(lightVerts, lightInd, tex);
+	meshList.push_back(floor);
+	meshList.push_back(rock);
+	meshList.push_back(fish);
+	meshList.push_back(kelp);
+	//meshList.push_back(box);
 
-	glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	glm::vec3 lightPos = glm::vec3(0.0f, 40.0f, 0.0f);
-	glm::mat4 lightModel = glm::mat4(1.0f);
-	lightModel = glm::translate(lightModel, lightPos);
 
 	glm::vec3 objectPos = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::mat4 objectModel = glm::mat4(1.0f);
 	objectModel = glm::translate(objectModel, objectPos);
 
+	objectModel = glm::mat4(1.0f);
+	floorShader.Activate();
+	glUniformMatrix4fv(glGetUniformLocation(floorShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModel));
+	glUniform1f(glGetUniformLocation(floorShader.ID, "texRep"), 2.0);
 
-	lightShader.Activate();
-	glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
-	glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-	shaderProgram.Activate();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModel));
-	glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-	glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-	//glEnable(GL_DEPTH_TEST);
+	rockShader.Activate();
+	glm::mat4 objectModeler = glm::mat4(1.0f);
+	glUniformMatrix4fv(glGetUniformLocation(rockShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModeler));
+	glUniform1f(glGetUniformLocation(rockShader.ID, "texRep"), 8.0);
+
+	waterSurfaceShader.Activate();
+	objectPos = glm::vec3(0.0f, 25.0f, 0.0f);
+	objectModel = glm::mat4(1.0f);
+	objectModel = glm::translate(objectModel, objectPos);
+	glUniformMatrix4fv(glGetUniformLocation(waterSurfaceShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModel));
+	glUniform1f(glGetUniformLocation(waterSurfaceShader.ID, "texRep"), 0.0);
+
+	sunShader.Activate();
+	objectPos = glm::vec3(0.0f, 100.0f, 0.0f);
+	objectModel = glm::mat4(1.0f);
+	objectModel = glm::translate(objectModel, objectPos);
+	glUniformMatrix4fv(glGetUniformLocation(sunShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModel));
+	glUniform1f(glGetUniformLocation(sunShader.ID, "texRep"), 0.0);
+
+	//boxShader.Activate();
+	//objectModeler = glm::mat4(1.0f);
+	kelpShader.Activate();
+	glUniformMatrix4fv(glGetUniformLocation(kelpShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModeler));
 
 	fishShader.Activate();
-
 	objectPos = glm::vec3(0.0f, 0.0f, 0.0f);
 	objectModel = glm::mat4(1.0f);
 	objectModel = glm::translate(objectModel, objectPos);
 	objectModel = glm::rotate(objectModel, (float)PI/16, glm::vec3(0, 1, 0));
-
 	glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"), 1.0f, 1.0f, 1.0f);
 	glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModel));
-	glUniform3f(glGetUniformLocation(fishShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	//glUniform3f(glGetUniformLocation(fishShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Creates camera object
 
-
-	BoidsController boidsController = BoidsController();
-	//boidsController.initBoids(0, PI / 2, PI / 2, numBoids, fish_list);
 	boidsController.initBoids(0, 0, 0, sholes);
-
 	double prevTime = glfwGetTime();
 
 	// Main while loop
@@ -347,50 +533,47 @@ int main()
 			}
 
 			prevTime = crntTime;
+
+			for (int i = 0; i < theKelp.size(); i++) {
+				theKelp[i].pushCycle(0.5 + theKelp[i].size/2 );
+			}
+
+			floor.uppdate_caustics();
+			fish.uppdate_caustics();
+			rock.uppdate_caustics();
+			waterSurface.uppdate_caustics();
+
 		}
 
-		// Specify the color of the background
-		glClearColor(0.07f, 0.13f, 0.37f, 1.0f);
-		// Clean the back buffer and depth buffer
+		glClearColor(0.17f, 0.33f, 0.57f, 1.f);
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-		// Handles camera inputs
 		camera.Inputs(window);
-		// Updates and exports the camera matrix to the Vertex Shader
-		camera.updateMatrix(45.0f, 0.1f, 500.0f);
+		camera.updateMatrix(45.0f, 0.1f, 200.0f);
 
-		// Draws different meshes
-		lightShader.Activate();
-		light.Draw(lightShader, camera);
+		sunShader.Activate();
+		sun.Draw(sunShader, camera);
 
-		shaderProgram.Activate();
-		floor.Draw(shaderProgram, camera);
 
-		//fishShader.Activate();
-		//glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"), 1.0f, 0.0f, 0.0f);
-		//glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModel));
-		//glUniform3f(glGetUniformLocation(fishShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+		waterSurfaceShader.Activate();
+		glUniform1f(glGetUniformLocation(waterSurfaceShader.ID, "time"), glfwGetTime());
+		waterSurface.Draw(waterSurfaceShader, camera);
 
-		//fish.Draw(fishShader, camera);
+		kelpShader.Activate();
+		drawKelp(kelp, kelpShader, camera, theKelp, glfwGetTime());
 
+		rockShader.Activate();
+		glUniform1f(glGetUniformLocation(rockShader.ID, "time"), glfwGetTime());
+		rock.Draw(rockShader, camera);
+
+		floorShader.Activate();
+		glUniform1f(glGetUniformLocation(floorShader.ID, "time"), glfwGetTime());
+		floor.Draw(floorShader, camera);
 
 		fishShader.Activate();
-		draw_fish(fish, fishShader, camera, lightPos, sholes);
-
-		//objectModel = glm::mat4(1.0f);
-		//objectModel = glm::translate(objectModel, glm::vec3(sin(glm::radians(rotation*16))/8, 2.0 + sin(glm::radians(rotation * 8))/ 16, 0));
-
-		//glm::mat4 rot = glm::rotate(cos(glm::radians(rotation*16))/8, glm::vec3(0, 1, 0));
-		//rot = glm::rotate(rot, cos(glm::radians(rotation * 8)) / 16, glm::vec3(1, 0, 0));
-
-		//glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "rot"), 1, GL_FALSE, glm::value_ptr(rot));
-		//glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModel));
-
-		//fish.Draw(fishShader, camera);
-
-		//newShader.Activate();
-		//draw_fish_smp(fish, fishShader, camera, lightPos);
+		glUniform1f(glGetUniformLocation(fishShader.ID, "time"), glfwGetTime());
+		draw_fish(fish, fishShader, camera, sholes);
 
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
@@ -401,8 +584,8 @@ int main()
 
 
 	// Delete all the objects we've created
-	shaderProgram.Delete();
-	lightShader.Delete();
+	rockShader.Delete();
+	floorShader.Delete();
 	fishShader.Delete();
 	// Delete window before ending the program
 	glfwDestroyWindow(window);

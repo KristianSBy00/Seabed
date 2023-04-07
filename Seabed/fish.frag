@@ -7,52 +7,34 @@ in vec3 crntPos;
 in vec3 frag_normals;
 in vec2 texCoord;
 
-uniform sampler2D tex0;
-uniform vec3 lightPos;
+uniform sampler2D diffuse0;
+uniform sampler2D specular0;
+uniform sampler2D normal0;
+uniform sampler2D dissortion0;
+uniform sampler2D caustics;
 uniform vec3 camPos;
 uniform vec3 fishColor;
+uniform float time;
 
-
-vec4 pointLight()
-{	
-	// used in two variables so I calculate it here to not have to do it twice
-	vec3 lightVec = lightPos - crntPos;
-
-	// intensity of light with respect to distance
-	float dist = length(lightVec);
-	float a = 0.000001;
-	float b = 0.00001;
-	float inten = 1.0f / (a * dist * dist + b * dist + 1.0f);
-
-	// ambient lighting
-	float ambient = 0.30f;
-
-	// diffuse lighting
-	vec3 normal = normalize(frag_normals);
-	vec3 lightDirection = normalize(lightVec);
-	float diffuse = max(dot(normal, lightDirection), 0.0f);
-
-	// specular lighting
-	float specularLight = 0.50f;
-	vec3 viewDirection = normalize(camPos - crntPos);
-	vec3 reflectionDirection = reflect(-lightDirection, normal);
-	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
-	float specular = specAmount * specularLight;
-
-	return (texture(tex0, texCoord) + vec4(fishColor, 1.0)/2)* (diffuse + ambient + specular);
-}
 
 void main()
 {
-	// outputs final color
-	//FragColor = pointLight();
-	//vec3 lightDirection = normalize(vec3(0.8, -0.5, 0.6));
 
-	//float scalar = max(0, dot(frag_normals, -lightDirection));
+	float disortionx = sin(time * 2) * 0.005;
+	float disortiony = cos(time * 2) * 0.005;
 
-	//vec3 lit_cols = fishColor * scalar;
+	vec2 disortion = vec2(disortionx, disortiony);
 
-	//FragColor = vec4(lit_cols, 1.0);
+	vec2 causticCoord = vec2( (crntPos.x + 15) / 30, (crntPos.z + 15) / 30);
 
-	FragColor = pointLight();
+	vec4 color = texture(diffuse0, texCoord + disortion) + vec4(fishColor/2, 0.0);
+
+	float light = texture(caustics, mod(causticCoord + time/16, 1)).r * 0.15 + 0.4;
+
+	FragColor = color * light;
+
+	FragColor.r = pow(FragColor.r, 2) + 0.05;
+    FragColor.g = pow(FragColor.g, 2) + 0.15;
+    FragColor.b = pow(FragColor.b, 2) + 0.35;
+    FragColor.a = 1.0;
 }

@@ -14,13 +14,20 @@ public:
 	std::vector <Vertex> vertices;
 	std::vector <GLuint> indices;
 	std::vector <Texture> textures;
+	std::vector <Texture> caustics;
+	std::vector <Texture> normals;
+
+	int caustic_index;
+
 	// Store VAO in public so it can be used in the Draw function
 	VAO VAO;
 
 	// Initializes the mesh
-	Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& textures);
+	Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& textures, std::vector <Texture>& caustics, std::vector <Texture>& normals);
 
 	// Draws the mesh
 	void Draw(Shader& shader, Camera& camera);
+
+	void uppdate_caustics();
 };
 #endif

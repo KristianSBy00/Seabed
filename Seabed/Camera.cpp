@@ -40,8 +40,7 @@ void Camera::Matrix(Shader& shader, const char* uniform)
 
 
 
-void Camera::Inputs(GLFWwindow* window)
-{
+void Camera::Inputs(GLFWwindow* window){
 	if (!fishCam) {
 		// Handles key inputs
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)

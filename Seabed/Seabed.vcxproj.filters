@@ -22,6 +22,12 @@
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{1b5ecd4e-cf4f-480d-93df-dd51d8c696cb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Textures\caustics">
+      <UniqueIdentifier>{979ea5be-67a0-452e-a964-573ddb3c7bb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Textures\surfaceNormals">
+      <UniqueIdentifier>{f99eb82d-acfd-44fe-b0d3-517769c0f77a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -66,6 +72,9 @@
     <ClCompile Include="glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Kelp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.vert">
@@ -74,28 +83,28 @@
     <None Include="default.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="light.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="light.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="floor.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="floor.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
     <None Include="fish.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="fish.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="new.frag">
+    <None Include="kelp.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="new.vert">
+    <None Include="kelp.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="waterSurface.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="waterSurface.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="sun.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="sun.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
@@ -130,22 +139,241 @@
     <ClInclude Include="Shoal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tiny_obj_loader.h">
+    <ClInclude Include="obj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="obj.h">
+    <ClInclude Include="Kelp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="textures\sand.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="textures\sea_sand.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
     <Image Include="textures\fish_texture.png">
       <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="textures\Stylized_Sand_001_height.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="textures\Stylized_Sand_001_basecolor.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="textures\Stylized_Sand_001_normal.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="textures\Sea_Rock_001_Normal.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="textures\Sea_Rock_001_BaseColor.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="textures\Sea_Rock_001_Height.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="textures\Coral_002_basecolor.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="textures\Coral_002_normal.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="textures\Coral_002_height.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="textures\disortionmap.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr1.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr2.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr3.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr4.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr5.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr9.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr10.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr11.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr12.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr13.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr14.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr15.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr16.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr17.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr18.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr19.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr20.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr21.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr22.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr23.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr24.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr25.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr26.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr27.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr28.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr29.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr30.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr31.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr32.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr6.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr7.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\caustics\nr8.png">
+      <Filter>Resource Files\Textures\caustics</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr1.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr2.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr3.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr4.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr5.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr6.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr7.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr8.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr9.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr10.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr11.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr12.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr13.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr14.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr15.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr16.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr17.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr18.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr19.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr20.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr21.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr22.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr23.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr24.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr25.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr26.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr27.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr28.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr29.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr30.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr31.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\surfaceNormals\nr32.png">
+      <Filter>Resource Files\Textures\surfaceNormals</Filter>
     </Image>
   </ItemGroup>
 </Project>

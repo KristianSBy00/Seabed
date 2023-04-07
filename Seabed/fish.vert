@@ -12,8 +12,12 @@ out vec2 texCoord;
 
 uniform mat4 camMatrix;
 uniform mat4 model;
-uniform mat4 tra;
+uniform mat4 trans;
 uniform float swimCycle;
+uniform mat4 rot_x;
+uniform mat4 rot_y;
+uniform mat4 rot_z;
+
 
 mat4 BuildTranslation(vec3 delta)
 {
@@ -25,25 +29,30 @@ mat4 BuildTranslation(vec3 delta)
     return m;
 }
 
-uniform mat4 rot;
 
 void main()
 {
 	texCoord = aTex;
 	vec3 scaledPos = aPos * 0.25;
 
-	mat4 nRot = rot * (scaledPos.z * scaledPos.z * 2);
+	mat4 rotY = rot_y * (scaledPos.z * scaledPos.z * 1);
 
-	nRot[0][0] = 1;
-	nRot[1][1] = 1;
-	nRot[2][2] = 1;
-	nRot[3][3] = 1;
+	rotY[0][0] = 1;
+	rotY[1][1] = 1;
+	rotY[2][2] = 1;
+	rotY[3][3] = 1;
 
-	mat4 even_trans = BuildTranslation(vec3(0, 0, 0));
+	mat4 rotZ = rot_z * (scaledPos.y - 0.25) * 4;
 
-	crntPos = vec3(camMatrix * vec4(scaledPos, 1.0f));
+	rotZ[0][0] = 1;
+	rotZ[1][1] = 1;
+	rotZ[2][2] = 1;
+	rotZ[3][3] = 1;
 
-	gl_Position = camMatrix * model * tra * nRot * even_trans * vec4(scaledPos, 1.0f);
+	crntPos = vec3(model * trans * rotY * rot_x * rotZ * vec4(scaledPos, 1.0f));
 
-	frag_normals = normalize(mat3(model * tra * nRot * even_trans) * aNormal);
+
+	gl_Position = camMatrix * vec4(crntPos, 1.0f);
+
+	frag_normals = normalize(mat3(model * trans * rotY * rot_x * rotZ) * aNormal);
 }

@@ -13,8 +13,7 @@
 class BoidsController
 {
 public:
-	double visualRange = 5;
-	BoidsController(double visualRange);
+	BoidsController(double coherence, double separation, double alignment, double visualRange);
 	BoidsController();
 
 	double fRand(double fMin, double fMax);
@@ -28,18 +27,54 @@ public:
 	void keepWithinBounds(Fish& fish);
 
 	void flyTowardsCenter(int school_id, int id, int numBoids, Fish fish_list[][NUMBER_FISH]);
-	void flyTowardsCenter(Fish& the_fish, std::vector <Fish>& shole);
+	void flyTowardsCenter(Fish& the_fish, Shoal shoal);
 
 	void avoidOthers(int school_id, int id, int numBoids, Fish fish_list[][NUMBER_FISH]);
 	void avoidOthers(Fish& the_fish, std::vector <Shoal>& sholes);
 
 	void matchVelocity(int school_id, int id, int numBoids, Fish fish_list[][NUMBER_FISH]);
-	void matchVelocity(Fish& the_fish, std::vector <Fish>& shole);
+	void matchVelocity(Fish& the_fish, Shoal shoal);
+
+	void avoidObsticle(Fish& the_fish);
 
 	void limitSpeed(int school_id, int id, int numBoids, Fish fish_list[][NUMBER_FISH]);
 	void limitSpeed(Fish& the_fish);
 
 	void update(int numBoids, Fish fish_list[][NUMBER_FISH]);
 	void update(std::vector<Shoal>& sholes);
+
+	void setCoherence(double newCoherence);
+	void setSeparation(double newSeparation);
+	void setAlignment(double newAlignment);
+	void setVisualRange(double newVisualRange);
+
+	void incrementCoherence();
+	void decrementCoherence();
+
+	void incrementSeparation();
+	void decrementSeparation();
+
+	void incrementAlignment();
+	void decrementAlignment();
+
+	void incrementVisualRange();
+	void decrementVisualRange();
+
+	void addObsticle(glm::vec3 obsticle);
+	void calcBound();
+
+	double distance(Fish& fish_1, glm::vec3 obsticle);
+
+	bound getBound();
+
+
+private:
+	double coherence;
+	double separation;
+	double alignment;
+	double visualRange;
+
+	std::vector<glm::vec3> obsticles;
+	bound boundory;
 };
 #endif

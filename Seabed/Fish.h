@@ -15,6 +15,11 @@ public:
 	double d_y;
 	double d_z;
 
+
+	double ddx;
+	double ddy;
+	double ddz;
+
 	double rot_x;
 	double rot_y;
 	double rot_z;

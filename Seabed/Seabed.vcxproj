@@ -24,6 +24,7 @@
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="Fish.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="Kelp.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="obj.cpp" />
@@ -39,31 +40,104 @@
     <None Include="default.vert" />
     <None Include="fish.frag" />
     <None Include="fish.vert" />
-    <None Include="floor.frag" />
-    <None Include="floor.vert" />
-    <None Include="light.frag" />
-    <None Include="light.vert" />
-    <None Include="new.frag" />
-    <None Include="new.vert" />
+    <None Include="kelp.frag" />
+    <None Include="kelp.vert" />
+    <None Include="sun.frag" />
+    <None Include="sun.vert" />
+    <None Include="waterSurface.frag" />
+    <None Include="waterSurface.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="boidsController.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="EBO.h" />
     <ClInclude Include="Fish.h" />
+    <ClInclude Include="Kelp.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="obj.h" />
     <ClInclude Include="shaderClass.h" />
     <ClInclude Include="Shoal.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="VAO.h" />
     <ClInclude Include="VBO.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="textures\caustics\nr1.png" />
+    <Image Include="textures\caustics\nr10.png" />
+    <Image Include="textures\caustics\nr11.png" />
+    <Image Include="textures\caustics\nr12.png" />
+    <Image Include="textures\caustics\nr13.png" />
+    <Image Include="textures\caustics\nr14.png" />
+    <Image Include="textures\caustics\nr15.png" />
+    <Image Include="textures\caustics\nr16.png" />
+    <Image Include="textures\caustics\nr17.png" />
+    <Image Include="textures\caustics\nr18.png" />
+    <Image Include="textures\caustics\nr19.png" />
+    <Image Include="textures\caustics\nr2.png" />
+    <Image Include="textures\caustics\nr20.png" />
+    <Image Include="textures\caustics\nr21.png" />
+    <Image Include="textures\caustics\nr22.png" />
+    <Image Include="textures\caustics\nr23.png" />
+    <Image Include="textures\caustics\nr24.png" />
+    <Image Include="textures\caustics\nr25.png" />
+    <Image Include="textures\caustics\nr26.png" />
+    <Image Include="textures\caustics\nr27.png" />
+    <Image Include="textures\caustics\nr28.png" />
+    <Image Include="textures\caustics\nr29.png" />
+    <Image Include="textures\caustics\nr3.png" />
+    <Image Include="textures\caustics\nr30.png" />
+    <Image Include="textures\caustics\nr31.png" />
+    <Image Include="textures\caustics\nr32.png" />
+    <Image Include="textures\caustics\nr4.png" />
+    <Image Include="textures\caustics\nr5.png" />
+    <Image Include="textures\caustics\nr6.png" />
+    <Image Include="textures\caustics\nr7.png" />
+    <Image Include="textures\caustics\nr8.png" />
+    <Image Include="textures\caustics\nr9.png" />
+    <Image Include="textures\Coral_002_basecolor.png" />
+    <Image Include="textures\Coral_002_height.png" />
+    <Image Include="textures\Coral_002_normal.png" />
+    <Image Include="textures\disortionmap.png" />
     <Image Include="textures\fish_texture.png" />
-    <Image Include="textures\sand.png" />
-    <Image Include="textures\sea_sand.png" />
+    <Image Include="textures\Sea_Rock_001_BaseColor.png" />
+    <Image Include="textures\Sea_Rock_001_Height.png" />
+    <Image Include="textures\Sea_Rock_001_Normal.png" />
+    <Image Include="textures\Stylized_Sand_001_basecolor.png" />
+    <Image Include="textures\Stylized_Sand_001_height.png" />
+    <Image Include="textures\Stylized_Sand_001_normal.png" />
+    <Image Include="textures\surfaceNormals.png" />
+    <Image Include="textures\surfaceNormals\nr1.png" />
+    <Image Include="textures\surfaceNormals\nr2.png" />
+    <Image Include="textures\surfaceNormals\nr11.png" />
+    <Image Include="textures\surfaceNormals\nr12.png" />
+    <Image Include="textures\surfaceNormals\nr13.png" />
+    <Image Include="textures\surfaceNormals\nr14.png" />
+    <Image Include="textures\surfaceNormals\nr15.png" />
+    <Image Include="textures\surfaceNormals\nr16.png" />
+    <Image Include="textures\surfaceNormals\nr17.png" />
+    <Image Include="textures\surfaceNormals\nr18.png" />
+    <Image Include="textures\surfaceNormals\nr19.png" />
+    <Image Include="textures\surfaceNormals\nr20.png" />
+    <Image Include="textures\surfaceNormals\nr3.png" />
+    <Image Include="textures\surfaceNormals\nr21.png" />
+    <Image Include="textures\surfaceNormals\nr22.png" />
+    <Image Include="textures\surfaceNormals\nr23.png" />
+    <Image Include="textures\surfaceNormals\nr24.png" />
+    <Image Include="textures\surfaceNormals\nr25.png" />
+    <Image Include="textures\surfaceNormals\nr26.png" />
+    <Image Include="textures\surfaceNormals\nr27.png" />
+    <Image Include="textures\surfaceNormals\nr28.png" />
+    <Image Include="textures\surfaceNormals\nr29.png" />
+    <Image Include="textures\surfaceNormals\nr30.png" />
+    <Image Include="textures\surfaceNormals\nr4.png" />
+    <Image Include="textures\surfaceNormals\nr31.png" />
+    <Image Include="textures\surfaceNormals\nr32.png" />
+    <Image Include="textures\surfaceNormals\nr5.png" />
+    <Image Include="textures\surfaceNormals\nr6.png" />
+    <Image Include="textures\surfaceNormals\nr7.png" />
+    <Image Include="textures\surfaceNormals\nr8.png" />
+    <Image Include="textures\surfaceNormals\nr9.png" />
+    <Image Include="textures\surfaceNormals\nr10.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -122,8 +196,8 @@
     <LibraryPath>C:\Users\Kristian\source\repos\Seabed\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\krist\source\repos\Seabed\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\krist\source\repos\Seabed\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\krist\source\repos\KristianSBy00\Seabed\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\krist\source\repos\KristianSBy00\Seabed\Libraries\lib;C:\Users\krist\source\repos\Seabed\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

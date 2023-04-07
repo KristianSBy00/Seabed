@@ -1,10 +1,13 @@
 #include "Mesh.h"
 
-Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& textures)
+Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& textures, std::vector <Texture>& caustics, std::vector <Texture>& normals)
 {
 	Mesh::vertices = vertices;
 	Mesh::indices = indices;
 	Mesh::textures = textures;
+	Mesh::caustics = caustics;
+	Mesh::normals = normals;
+	Mesh::caustic_index = 0;
 
 	VAO.Bind();
 	// Generates Vertex Buffer Object and links it to vertices
@@ -32,6 +35,10 @@ void Mesh::Draw(Shader& shader, Camera& camera)
 	// Keep track of how many of each type of textures we have
 	unsigned int numDiffuse = 0;
 	unsigned int numSpecular = 0;
+	unsigned int numNormal = 0;
+	unsigned int numDissortion = 0;
+
+	//printf("im on caustic_index %d\n", Mesh::caustic_index);
 
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
@@ -45,13 +52,35 @@ void Mesh::Draw(Shader& shader, Camera& camera)
 		{
 			num = std::to_string(numSpecular++);
 		}
+		else if (type == "normal")
+		{
+			num = std::to_string(numNormal++);
+		}
+		else if (type == "dissortion")
+		{
+			num = std::to_string(numDissortion++);
+		}
 		textures[i].texUnit(shader, (type + num).c_str(), i);
 		textures[i].Bind();
 	}
+
+	caustics[Mesh::caustic_index].texUnit(shader, "caustics", textures.size() + Mesh::caustic_index);
+	caustics[Mesh::caustic_index].Bind();
+
+	normals[Mesh::caustic_index].texUnit(shader, "normalTex", textures.size() + caustics.size() + Mesh::caustic_index);
+	normals[Mesh::caustic_index].Bind();
+
+
 	// Take care of the camera Matrix
 	glUniform3f(glGetUniformLocation(shader.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 	camera.Matrix(shader, "camMatrix");
 
 	// Draw the actual mesh
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+}
+
+
+void Mesh::uppdate_caustics() {
+	Mesh::caustic_index += 1;
+	Mesh::caustic_index = Mesh::caustic_index % 32;
 }
