@@ -1,4 +1,4 @@
-#version 330 core
+#version 430 core
 
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
@@ -25,29 +25,81 @@ uniform mat4 currentRot;
 uniform mat4 trans;
 uniform mat4 baseRot;
 uniform mat4 model;
-
 float time;
+float cycle;
+
+mat4 rotx(float ang){
+	return mat4(
+		1,	0,			 0,		   0,
+		0,	cos(ang),	-sin(ang), 0,
+		0,	sin(ang),	 cos(ang), 0,
+		0,	0,			 0,		   1
+	);
+}
+
+mat4 roty(float ang){
+	return mat4(
+		 cos(ang),	0,	sin(ang),	0,
+		 0,			1,	0,			0,
+		-sin(ang),	0,	cos(ang),	0,
+		 0,			0,	0,			1
+	);
+}
+
+mat4 rotz(float ang){
+	return mat4(
+		cos(ang),	-sin(ang),	0, 0,
+		sin(ang),	 cos(ang),	0, 0,
+		0,			 0,			1, 0,
+		0,			 0,			0, 1
+	);
+}
+
+
+mat4 traslate(vec3 pos){
+    return mat4(
+        vec4(1.0, 0.0, 0.0, 0.0),
+        vec4(0.0, 1.0, 0.0, 0.0),
+        vec4(0.0, 0.0, 1.0, 0.0),
+        vec4(pos, 1.0));
+}
+
+mat4 my_matrix = mat4 (
+	1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f
+);
+
 
 void main()
 {
 
-	vec3 currentDir = vec3(1.0, 0.0, 1.0); 
-
+	//vec3 currentDir = vec3(1.0, 0.0, 1.0); 
 	// calculates current position
 	vec3 scaledPos = aPos * size;
 	scaledPos.y = scaledPos.y * lenght;
 
-	mat4 rotZ = rot_z * aPos.x * aPos.y;
-	mat4 rotX = rot_x * aPos.z * aPos.y;
-	mat4 rotY = rot_y * aPos.y * aPos.x;
+	//mat4 rotZ = rot_z * aPos.x * aPos.y;
+	//mat4 rotX = rot_x * aPos.z * aPos.y;
+	//mat4 rotY = rot_y * aPos.y * aPos.x;
+
+	mat4 rot_X = rotx(sin(radians(cycle * 8)) / 8);
+	mat4 rot_Y = roty(cos(radians(cycle * 4)) / 4);
+	mat4 rot_Z = rotz(cos(radians(cycle * 8)) / 8);
+
+	mat4 rotX = rot_X * aPos.x * aPos.y;
+	mat4 rotY = rot_Y * aPos.z * aPos.y;
+	mat4 rotZ = rot_Z * aPos.y * aPos.x;
+
+	//mat4 rotZ = aPos.x * aPos.y * rotx();
+	//mat4 rotX = rot_x * aPos.z * aPos.y;
+	//mat4 rotY = rot_y * aPos.y * aPos.x;
 
 	mat4 current = currentRot * aPos.y * aPos.y * aPos.y;
 
-	rotZ[0][0] = 1;
-	rotZ[1][1] = 1;
-	rotZ[2][2] = 1;
-	rotZ[3][3] = 1;
-
+	
+	
 	rotX[0][0] = 1;
 	rotX[1][1] = 1;
 	rotX[2][2] = 1;
@@ -58,19 +110,12 @@ void main()
 	rotY[2][2] = 1;
 	rotY[3][3] = 1;
 
-	mat4 newModel = trans * currentRot * rotY * rotX * rotZ * baseRot;
+	rotZ[0][0] = 1;
+	rotZ[1][1] = 1;
+	rotZ[2][2] = 1;
+	rotZ[3][3] = 1;
 
-	crntPos = vec3(newModel * vec4(scaledPos, 1.0f));
-
-	mat4 glslNormMatrix = transpose(inverse(newModel));
-
-	vec4 tmpNorm = vec4(aNormal, 1.0);
-
-	tmpNorm = glslNormMatrix * tmpNorm;
-	Normal = normalize(vec3(tmpNorm.x, tmpNorm.y, tmpNorm.z));
-
-	color = aColor;
-	texCoord = aTex;
+	crntPos = vec3( trans * currentRot * rotX * rotY * rotZ * baseRot * vec4(scaledPos, 1.0f));
 	
 	gl_Position = camMatrix * vec4(crntPos, 1.0);
 }

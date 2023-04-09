@@ -52,7 +52,7 @@ void Mesh::Draw(Shader& shader, Camera& camera)
 		{
 			num = std::to_string(numSpecular++);
 		}
-		else if (type == "normal")
+		else if (type == "normals")
 		{
 			num = std::to_string(numNormal++);
 		}
@@ -64,11 +64,17 @@ void Mesh::Draw(Shader& shader, Camera& camera)
 		textures[i].Bind();
 	}
 
-	caustics[Mesh::caustic_index].texUnit(shader, "caustics", textures.size() + Mesh::caustic_index);
-	caustics[Mesh::caustic_index].Bind();
+	if (caustics.size() != 0) {
+		caustics[Mesh::caustic_index].texUnit(shader, "caustics", textures.size() + Mesh::caustic_index);
+		caustics[Mesh::caustic_index].Bind();
+	}
 
-	normals[Mesh::caustic_index].texUnit(shader, "normalTex", textures.size() + caustics.size() + Mesh::caustic_index);
-	normals[Mesh::caustic_index].Bind();
+	if (normals.size() != 0) {
+		normals[Mesh::caustic_index].texUnit(shader, "normalTex", textures.size() + caustics.size() + Mesh::caustic_index);
+		normals[Mesh::caustic_index].Bind();
+	}
+
+	
 
 
 	// Take care of the camera Matrix

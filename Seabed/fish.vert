@@ -12,47 +12,56 @@ out vec2 texCoord;
 
 uniform mat4 camMatrix;
 uniform mat4 model;
-uniform mat4 trans;
 uniform float swimCycle;
-uniform mat4 rot_x;
-uniform mat4 rot_y;
-uniform mat4 rot_z;
 
-
-mat4 BuildTranslation(vec3 delta)
-{
-    mat4 m;
-    m[0][0] = 1;
-    m[1][1] = 1;
-    m[2][2] = 1;
-    m[3] = vec4(delta, 1.0);
-    return m;
+mat4 rotx(float ang){
+	return mat4(
+		1,	0,			 0,		   0,
+		0,	cos(ang),	-sin(ang), 0,
+		0,	sin(ang),	 cos(ang), 0,
+		0,	0,			 0,		   1
+	);
 }
 
+mat4 roty(float ang){
+	return mat4(
+		 cos(ang),	0,	sin(ang),	0,
+		 0,			1,	0,			0,
+		-sin(ang),	0,	cos(ang),	0,
+		 0,			0,	0,			1
+	);
+}
+
+mat4 rotz(float ang){
+	return mat4(
+		cos(ang),	-sin(ang),	0, 0,
+		sin(ang),	 cos(ang),	0, 0,
+		0,			 0,			1, 0,
+		0,			 0,			0, 1
+	);
+}
+
+
+mat4 traslate(vec3 pos){
+    return mat4(
+        vec4(1.0, 0.0, 0.0, 0.0),
+        vec4(0.0, 1.0, 0.0, 0.0),
+        vec4(0.0, 0.0, 1.0, 0.0),
+        vec4(pos, 1.0));
+}
 
 void main()
 {
 	texCoord = aTex;
 	vec3 scaledPos = aPos * 0.25;
+	mat4 swRotY = roty( scaledPos.z *			cos(radians(swimCycle * 64	+ scaledPos.z * 180  )	) / 8);
+	mat4 swRotX = rotx( (scaledPos.z/16 + 2) *	cos(radians(swimCycle * 32)							) / 32);
+	mat4 swRotZ = rotz( (scaledPos.y - 0.5)  *	cos(radians(swimCycle * 64	+ (scaledPos.y - 0.5) * 180)) / 2);
+	mat4 swTran = traslate(vec3( sin(radians(swimCycle*16)) / 32 , cos(radians(swimCycle*16) / 32), 0));
 
-	mat4 rotY = rot_y * (scaledPos.z * scaledPos.z * 1);
 
-	rotY[0][0] = 1;
-	rotY[1][1] = 1;
-	rotY[2][2] = 1;
-	rotY[3][3] = 1;
-
-	mat4 rotZ = rot_z * (scaledPos.y - 0.25) * 4;
-
-	rotZ[0][0] = 1;
-	rotZ[1][1] = 1;
-	rotZ[2][2] = 1;
-	rotZ[3][3] = 1;
-
-	crntPos = vec3(model * trans * rotY * rot_x * rotZ * vec4(scaledPos, 1.0f));
+	crntPos = vec3(swTran * model * swRotX * swRotY  * swRotZ * vec4(scaledPos, 1.0f));
 
 
 	gl_Position = camMatrix * vec4(crntPos, 1.0f);
-
-	frag_normals = normalize(mat3(model * trans * rotY * rot_x * rotZ) * aNormal);
 }

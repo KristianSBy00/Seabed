@@ -28,8 +28,7 @@ uniform mat4 model;
 
 void main()
 {
-
-	vec3 scaledPos = aPos * 5;
+	vec3 scaledPos = aPos * 50;
 	// calculates current position
 	crntPos = vec3(model * vec4(scaledPos, 1.0f));
 	// Assigns the normal from the Vertex Data to "Normal"

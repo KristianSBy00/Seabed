@@ -104,8 +104,17 @@ glm::mat4 Fish::get_translation_mat() {
 	return glm::translate(glm::vec3(x, y, z));
 }
 glm::mat4 Fish::get_model_mat() {
-	glm::mat4 ident = glm::mat4(1.0f);
-	return ident * get_translation_mat() * get_rotation_mat();
+	glm::vec3 pos = glm::vec3((float)x, (float)y, (float)z);
+
+	glm::mat4 out = glm::mat4(1.0f);
+	out = glm::translate(out, pos);
+	return out * get_rotation_mat();
+
+	//return get_translation_mat() * get_rotation_mat();
+
+	//return glm::rotate(get_rotation_mat(), pos);
+
+
 	//return ident * get_translation_mat() * get_rotation_mat();
 }
 
@@ -118,6 +127,6 @@ glm::vec3 Fish::get_rot_vec() {
 }
 
 glm::vec3 Fish::get_position_vec() {
-	return glm::vec3(x, y, z);
+	return glm::vec3((float)x, (float)y, (float)z);
 
 }

@@ -36,6 +36,8 @@
     <ClCompile Include="VBO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="box.frag" />
+    <None Include="box.vert" />
     <None Include="default.frag" />
     <None Include="default.vert" />
     <None Include="fish.frag" />
@@ -99,6 +101,7 @@
     <Image Include="textures\Coral_002_normal.png" />
     <Image Include="textures\disortionmap.png" />
     <Image Include="textures\fish_texture.png" />
+    <Image Include="textures\light_map.png" />
     <Image Include="textures\Sea_Rock_001_BaseColor.png" />
     <Image Include="textures\Sea_Rock_001_Height.png" />
     <Image Include="textures\Sea_Rock_001_Normal.png" />
@@ -236,7 +239,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

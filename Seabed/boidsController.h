@@ -67,12 +67,16 @@ public:
 
 	bound getBound();
 
+	void fightCurrent(Fish& fish);
+
 
 private:
 	double coherence;
 	double separation;
 	double alignment;
 	double visualRange;
+
+	double currentStrength;
 
 	std::vector<glm::vec3> obsticles;
 	bound boundory;

@@ -43,5 +43,5 @@ float direcLight()
 
 void main() {
     //float light = texture(caustics, mod(causticCoord + time/16, 1)).r * 0.5;
-    FragColor = vec4(0.17f, 0.33f, 0.57f, 0.2f) * direcLight();//+ vec4(0.1f, 0.1f, 0.1f, 0.0f)) * light;
+    FragColor = vec4(0.17f, 0.33f, 0.57f, 0.85f) * direcLight();//+ vec4(0.1f, 0.1f, 0.1f, 0.0f)) * light;
 }

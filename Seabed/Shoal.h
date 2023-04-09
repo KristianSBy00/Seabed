@@ -46,7 +46,5 @@ public:
 
 	void incrementVisualRange();
 	void decrementVisualRange();
-
-
 };
 #endif

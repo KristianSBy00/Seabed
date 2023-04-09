@@ -83,12 +83,6 @@
     <None Include="default.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="fish.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="fish.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
     <None Include="kelp.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
@@ -105,6 +99,18 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="sun.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="box.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="box.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="fish.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="fish.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
@@ -374,6 +380,9 @@
     </Image>
     <Image Include="textures\surfaceNormals\nr32.png">
       <Filter>Resource Files\Textures\surfaceNormals</Filter>
+    </Image>
+    <Image Include="textures\light_map.png">
+      <Filter>Resource Files\Textures</Filter>
     </Image>
   </ItemGroup>
 </Project>

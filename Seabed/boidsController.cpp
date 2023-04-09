@@ -9,6 +9,7 @@ BoidsController::BoidsController(double coherence, double separation, double ali
 	BoidsController::visualRange = visualRange;
 	BoidsController::obsticles = std::vector<glm::vec3>();
 	BoidsController::boundory = bound();
+	BoidsController::currentStrength = 0.005;
 }
 
 BoidsController::BoidsController() {
@@ -48,10 +49,10 @@ double BoidsController::distance(Fish& fish_1, glm::vec3 obsticle) {
 
 void BoidsController::initBoids(double rot_x, double rot_y, double rot_z, int numBoids, Fish fish_list[][NUMBER_FISH]) {
 
+	int id = 0;
+
 	for (int i = 0; i < NUMBER_SCOALES; i++) {
 		for (int j = 0; j < numBoids; j++) {
-			fish_list[i][j].id = i;
-
 			fish_list[i][j].x = fRand(-10, 10);
 			fish_list[i][j].y = fRand(0.5, 15);
 			fish_list[i][j].z = fRand(-10, 10);;
@@ -64,18 +65,25 @@ void BoidsController::initBoids(double rot_x, double rot_y, double rot_z, int nu
 			fish_list[i][j].rot_x = rot_x;
 			fish_list[i][j].rot_y = rot_y;
 			fish_list[i][j].rot_z = rot_z;
+
+			fish_list[i][j].id = id;
+
+			id++;
 		}
 	}
 }
 
 void BoidsController::initBoids(double rot_x, double rot_y, double rot_z, std::vector <Shoal>& sholes) {
+
+	int index = 0;
+
 	for (int i = 0; i < sholes.size(); i++) {
 		std::vector<Fish>& shole = sholes[i].get();
 
 		for (int j = 0; j < shole.size(); j++) {
 			Fish& fish = shole[j];
 
-			fish.id = j;
+			fish.id = index;
 
 			fish.x = fRand(-10, 10);
 			fish.y = fRand(30, 45);
@@ -93,12 +101,19 @@ void BoidsController::initBoids(double rot_x, double rot_y, double rot_z, std::v
 			fish.ddx = 0;
 			fish.ddy = 0;
 			fish.ddz = 0;
+
+			index += 1;
 		}
 	}
 }
 
+void BoidsController::fightCurrent(Fish& fish) {
+	fish.d_x += currentStrength/2;
+	fish.d_z += currentStrength/2;
+}
+
 void BoidsController::keepWithinBounds(int school_id, int id, Fish fish_list[][NUMBER_FISH]) {
-	int margin = 3;
+	int margin = 4;
 	double turnFactor = 0.025;
 
 	if (fish_list[school_id][id].x < -20 + margin) {
@@ -123,10 +138,10 @@ void BoidsController::keepWithinBounds(int school_id, int id, Fish fish_list[][N
 
 
 void BoidsController::keepWithinBounds(Fish& fish) {
-	double margin = 2;
+	double margin = 3;
 	double turnFactor = 0.0100;
 
-	if (fish.x < -30 + margin) {
+	if (fish.x < -30 + margin ) {
 		fish.d_x += turnFactor;
 	}
 	if (fish.x > 30 - margin) {
@@ -138,7 +153,7 @@ void BoidsController::keepWithinBounds(Fish& fish) {
 	if (fish.y > 25 - margin) {
 		fish.d_y -= turnFactor;
 	}
-	if (fish.z < -30 + margin) {
+	if (fish.z < -30 + margin ) {
 		fish.d_z += turnFactor;
 	}
 	if (fish.z > 30 - margin) {
@@ -431,6 +446,8 @@ void BoidsController::limitSpeed(Fish& fish) {
 
 void BoidsController::update(int numBoids, Fish fish_list[][NUMBER_FISH]) {
 	// Update each boid
+	double currentStrength = 0.00025;
+
 	for (int i = 0; i < NUMBER_SCOALES; i++) {
 		for (int j = 0; j < numBoids; j++) {
 			// Update the velocities according to each rule
@@ -442,16 +459,15 @@ void BoidsController::update(int numBoids, Fish fish_list[][NUMBER_FISH]) {
 			keepWithinBounds(i, j,			  fish_list);
 
 			// Update the position based on the current velocity
-			fish_list[i][j].x += fish_list[i][j].d_x;
+			fish_list[i][j].x += fish_list[i][j].d_x - currentStrength;
 			fish_list[i][j].y += fish_list[i][j].d_y;
-			fish_list[i][j].z += fish_list[i][j].d_z;
+			fish_list[i][j].z += fish_list[i][j].d_z - currentStrength;
 		}
 	}
 }
 
 void BoidsController::update(std::vector<Shoal>& sholes) {
 	// Update each boid
-
 	std::vector<bound> shole_bounds = std::vector<bound>();
 
 
@@ -466,6 +482,7 @@ void BoidsController::update(std::vector<Shoal>& sholes) {
 			flyTowardsCenter(fish, sholes[i]);
 			avoidOthers(fish, sholes);
 			matchVelocity(fish, sholes[i]);
+			fightCurrent(fish);
 			limitSpeed(fish);
 			keepWithinBounds(fish);
 			avoidObsticle(fish);
@@ -479,9 +496,9 @@ void BoidsController::update(std::vector<Shoal>& sholes) {
 			fish.ddy = fish.d_y;
 			fish.ddz = fish.d_z;
 
-			fish.x += fish.d_x;
+			fish.x += fish.d_x - currentStrength;
 			fish.y += fish.d_y;
-			fish.z += fish.d_z;
+			fish.z += fish.d_z - currentStrength;
 
 
 			fish.swimCycle += sqrt(fish.d_x * fish.d_x + fish.d_y * fish.d_y + fish.d_z * fish.d_z) * 5;
