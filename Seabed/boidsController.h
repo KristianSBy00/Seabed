@@ -63,6 +63,8 @@ public:
 	void addObsticle(glm::vec3 obsticle);
 	void calcBound();
 
+	bool inRock(Fish& the_fish);
+
 	double distance(Fish& fish_1, glm::vec3 obsticle);
 
 	bound getBound();

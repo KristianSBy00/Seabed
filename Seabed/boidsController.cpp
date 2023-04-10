@@ -380,9 +380,10 @@ void BoidsController::matchVelocity(Fish& the_fish, Shoal shoal){
 	}
 }
 
+/*
 void BoidsController::avoidObsticle(Fish& the_fish) {
-	double minDistance = 4; // The distance to stay away from other boids
-	double avoidFactor = 0.005; // Adjust velocity by this %
+	double minDistance = 1.5; // The distance to stay away from other boids
+	double avoidFactor = 0.0025; // Adjust velocity by this %
 	double moveX = 0;
 	double moveY = 0;
 	double moveZ = 0;
@@ -409,6 +410,82 @@ void BoidsController::avoidObsticle(Fish& the_fish) {
 	the_fish.d_x += moveX * avoidFactor;
 	the_fish.d_y += moveY * avoidFactor;
 	the_fish.d_z += moveZ * avoidFactor;
+}
+*/
+
+void BoidsController::avoidObsticle(Fish& the_fish) {
+
+
+	double orginalX = the_fish.d_x;
+	double orginalY = the_fish.d_y;
+	double orginalZ = the_fish.d_z;
+
+	double ensentive = 0.001;
+
+	/*
+	while (inRock(the_fish)) {
+		the_fish.d_y = orginalY;
+		the_fish.d_x = the_fish.d_x - ensentive * the_fish.d_x;
+		if (!inRock(the_fish)) return;
+
+		the_fish.d_x = orginalX;
+		the_fish.d_z = the_fish.d_z - ensentive * the_fish.d_z;
+		if (!inRock(the_fish)) return;
+
+		the_fish.d_z = orginalZ;
+		the_fish.d_y = the_fish.d_y - ensentive * the_fish.d_y;
+
+		ensentive = ensentive + 0.0001;
+	}
+
+	the_fish.d_x = the_fish.d_x - ensentive * the_fish.d_x;
+
+	if(!inRock(the_fish)) return;
+
+	the_fish.d_x = orginalX;
+	the_fish.d_y = the_fish.d_y - ensentive * the_fish.d_y;
+
+	if(!inRock(the_fish)) return;
+
+	the_fish.d_x = orginalX;
+	the_fish.d_y = orginalY;
+
+	the_fish.d_z = the_fish.d_z - ensentive * the_fish.d_z;
+	*/
+
+	if (!inRock(the_fish)) return;
+
+	the_fish.d_x -= 0.5 * the_fish.d_x;
+	the_fish.d_y -= 0.5 * the_fish.d_y;
+	the_fish.d_z -= 0.5 * the_fish.d_z;
+}
+
+bool BoidsController::inRock(Fish& the_fish) {
+
+	//cube1 x	4.229387    11.849386 	y  - 1.060215 13.579786	z - 7.055098 10.584902
+	//cube2 x	4.229387  - 2.678014	y    7.405579 13.579786	z - 7.055098 10.584902
+	//cube2 x	4.229387  -2.678014		y  - 1.060215 13.579786	z - 7.055098 10.584902
+
+	double x = the_fish.x + the_fish.d_x;
+	double y = the_fish.y + the_fish.d_y;
+	double z = the_fish.z + the_fish.d_z;
+
+	if (x > 11.849386 + 2) return false;
+	if (x < -10.298014 - 2) return false;
+
+	if (y > 13.579786 + 2) return false;
+
+	if (z > 10.584902 + 2) return false;
+	if (z < -7.055098 - 2) return false;
+
+
+	//is within larger cube, is only allowed under cube 2
+	if (x > 4.229387 ) return true;
+	if (x < -2.678014) return true;
+
+	if (y < 7.405579) return false; //under cube 2
+	return true;
+
 }
 
 void BoidsController::limitSpeed(int school_id, int id, int numBoids, Fish fish_list[][NUMBER_FISH]) {

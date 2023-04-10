@@ -24,8 +24,30 @@ float modifier = 1;
 float disortionx = sin(time * 2) * 0.005;
 float disortionz = cos(time * 2) * 0.005;
 
+float maxX = 6.271074;
+float minX = -4.528926 ;
+
+float maxY = 9.608419;
+float minY = -0.391581;
+
+float maxZ = 8.481811;
+float minZ = -5.518189;
+
+
+
 void main()
 {
+	bool inCave = true;
+
+	if ( crntPos.x > maxX) inCave = false;
+	if ( crntPos.x < minX) inCave = false;
+
+	if ( crntPos.y > maxY) inCave = false;
+	if ( crntPos.y < minY) inCave = false;
+
+	if ( crntPos.z > maxZ) inCave = false;
+	if ( crntPos.z < minZ) inCave = false;
+
 	for(int i = 0; i < 300; i++){
 		
 		if(i == fishId){
@@ -54,6 +76,11 @@ void main()
 	float light = texture(caustics, mod(causticCoord + time/16, 1)).r * 0.5 + 0.5;
 
 	FragColor = color * light * modifier;
+
+	if (inCave){
+		FragColor = texture(diffuse0, texCoord + disortion) * 0.5;
+		FragColor.a = 1.0;
+	}
 
 	FragColor.r = pow(FragColor.r, 2) + 0.05;
     FragColor.g = pow(FragColor.g, 2) + 0.15;

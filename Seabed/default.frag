@@ -49,8 +49,29 @@ vec4 direcLight()
 
 float modifier = 1;
 
+float maxX = 6.271074;
+float minX = -4.528926 ;
+
+float maxY = 9.608419;
+float minY = -0.391581;
+
+float maxZ = 8.481811;
+float minZ = -5.518189;
+
 void main()
 {
+
+	bool inCave = true;
+
+	if ( crntPos.x > maxX) inCave = false;
+	if ( crntPos.x < minX) inCave = false;
+
+	if ( crntPos.y > maxY) inCave = false;
+	if ( crntPos.y < minY) inCave = false;
+
+	if ( crntPos.z > maxZ) inCave = false;
+	if ( crntPos.z < minZ) inCave = false;
+
 	for(int i = 0; i < 300; i++){
 		vec3 fishPos = fish[i];
 
@@ -70,4 +91,14 @@ void main()
 	FragColor.r = pow(FragColor.r, 2) + 0.05;
     FragColor.g = pow(FragColor.g, 2) + 0.15;
     FragColor.b = pow(FragColor.b, 2) + 0.35;
+
+	if (inCave){
+		FragColor = texture(diffuse0, disortionCoord) * 0.5;
+		FragColor.a = 1.0;
+
+		FragColor.r = pow(FragColor.r, 2) + 0.05;
+		FragColor.g = pow(FragColor.g, 2) + 0.15;
+		FragColor.b = pow(FragColor.b, 2) + 0.35;
+
+	}
 }

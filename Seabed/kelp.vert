@@ -1,4 +1,4 @@
-#version 430 core
+#version 330 core
 
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
@@ -9,8 +9,6 @@ out vec3 crntPos;
 out vec3 Normal;
 out vec3 color;
 out vec2 texCoord;
-
-uniform sampler2D dissortion0;
 
 uniform mat4 camMatrix;
 
@@ -80,23 +78,25 @@ void main()
 	vec3 scaledPos = aPos * size;
 	scaledPos.y = scaledPos.y * lenght;
 
-	//mat4 rotZ = rot_z * aPos.x * aPos.y;
-	//mat4 rotX = rot_x * aPos.z * aPos.y;
-	//mat4 rotY = rot_y * aPos.y * aPos.x;
+	mat4 rotZ = rot_z * aPos.x * aPos.y;
+	mat4 rotX = rot_x * aPos.z * aPos.y;
+	mat4 rotY = rot_y * aPos.y * aPos.x;
 
-	mat4 rot_X = rotx(sin(radians(cycle * 8)) / 8);
-	mat4 rot_Y = roty(cos(radians(cycle * 4)) / 4);
-	mat4 rot_Z = rotz(cos(radians(cycle * 8)) / 8);
+	float newGuy = cycle;
 
-	mat4 rotX = rot_X * aPos.x * aPos.y;
-	mat4 rotY = rot_Y * aPos.z * aPos.y;
-	mat4 rotZ = rot_Z * aPos.y * aPos.x;
+	//mat4 rot_X = rotx(sin(radians(newGuy)) / 8);
+	//mat4 rot_Y = roty(cos(radians(cycle * 90 )));
+	//mat4 rot_Z = rotz(cos(radians(newGuy)) / 8);
+
+	//mat4 rotX = rot_X;
+	//mat4 rotY = rot_Y;
+	//mat4 rotZ = rot_Z;
 
 	//mat4 rotZ = aPos.x * aPos.y * rotx();
 	//mat4 rotX = rot_x * aPos.z * aPos.y;
 	//mat4 rotY = rot_y * aPos.y * aPos.x;
 
-	mat4 current = currentRot * aPos.y * aPos.y * aPos.y;
+	mat4 current = currentRot;
 
 	
 	
@@ -114,8 +114,11 @@ void main()
 	rotZ[1][1] = 1;
 	rotZ[2][2] = 1;
 	rotZ[3][3] = 1;
-
-	crntPos = vec3( trans * currentRot * rotX * rotY * rotZ * baseRot * vec4(scaledPos, 1.0f));
 	
-	gl_Position = camMatrix * vec4(crntPos, 1.0);
+
+	crntPos = vec3( model * currentRot * rotX * rotY * rotZ * baseRot * vec4(scaledPos, 1.0f));
+
+	//crntPos = vec3( trans * rot_Z * baseRot * vec4(scaledPos, 1.0f));
+	
+	gl_Position = camMatrix * vec4(crntPos, 1.0f);
 }

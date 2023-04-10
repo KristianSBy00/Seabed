@@ -14,10 +14,13 @@ uniform sampler2D specular0;
 uniform sampler2D normal0;
 uniform sampler2D caustics;
 uniform sampler2D normalTex;
+uniform sampler2D dissortion0;
 uniform vec3 camPos;
 uniform float time;
 
  vec2 causticCoord = vec2( (crntPos.x + 15) / 30, (crntPos.z + 15) / 30);
+
+ vec2 sun_pos = vec2( (crntPos.x + 30) / 60, (crntPos.z + 30) / 60);
 
 float direcLight()
 {
@@ -38,7 +41,7 @@ float direcLight()
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
 	float specular = specAmount * specularLight;
 
-	return diffuse + ambient + (1 - texture(caustics, mod(causticCoord + time/16, 1)).r) * specular;
+	return diffuse + ambient + (1 - texture(caustics, mod(causticCoord + time/16, 1)).r) * specular + (texture(dissortion0, sun_pos).r);
 }
 
 void main() {

@@ -50,17 +50,18 @@ mat4 traslate(vec3 pos){
         vec4(pos, 1.0));
 }
 
+
 void main()
 {
 	texCoord = aTex;
 	vec3 scaledPos = aPos * 0.25;
-	mat4 swRotY = roty( scaledPos.z *			cos(radians(swimCycle * 64	+ scaledPos.z * 180  )	) / 8);
+	mat4 swRotZ = roty( scaledPos.z *			cos(radians(swimCycle * 64	+ scaledPos.z * 180  )	) / 8);
 	mat4 swRotX = rotx( (scaledPos.z/16 + 2) *	cos(radians(swimCycle * 32)							) / 32);
-	mat4 swRotZ = rotz( (scaledPos.y - 0.5)  *	cos(radians(swimCycle * 64	+ (scaledPos.y - 0.5) * 180)) / 2);
-	mat4 swTran = traslate(vec3( sin(radians(swimCycle*16)) / 32 , cos(radians(swimCycle*16) / 32), 0));
+	mat4 swRotY = rotz( (scaledPos.y - 0.5)  *	cos(radians(swimCycle * 64	+ (scaledPos.y - 0.5) * 180)) / 2);
+	mat4 swTran = traslate(vec3( sin(radians(swimCycle*16)) / 16 , cos(radians(swimCycle*16)) / 16, sin(radians(swimCycle*16 + 180) / 64)));
 
 
-	crntPos = vec3(swTran * model * swRotX * swRotY  * swRotZ * vec4(scaledPos, 1.0f));
+	crntPos = vec3(model * swTran * swRotX * swRotY * swRotZ * vec4(scaledPos, 1.0f));
 
 
 	gl_Position = camMatrix * vec4(crntPos, 1.0f);

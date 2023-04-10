@@ -21,7 +21,9 @@ void main() {
     vec2 center = vec2(0.0, 0.0);
     vec3 lightVec = lightPos - crntPos;
 
-    vec3 baseColor = vec3(1.0, 1.0, 1.0);
+    vec3 baseColor = vec3(1.0, 1.0, 0.5);
+
+    vec4 sunColor = vec4(1.0, 1.0, 0.0, 1.0);
 
     float dist = distance(center, crntPos.xz);
 
@@ -33,12 +35,10 @@ void main() {
 
     vec3 color = (baseColor / (dist * dist)) * 10 * ( abs(sin(time/2))/4 + 0.9 );
 
-    vec3 sky = vec3(0.27f, 0.43f, 0.67f);
+    vec3 sky = vec3(1.f, 1.0f, 1.0f);
 
     if (color.r < sky.r) color.r = sky.r;
     if (color.g < sky.g) color.g = sky.g;
     if (color.b < sky.b) color.b = sky.b;
-
-    FragColor = vec4(color, 1.0); 
 
 }
