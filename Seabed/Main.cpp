@@ -138,8 +138,11 @@ void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, std::vector<Shoa
 	for (int i = 0; i < sholes_in.size(); i++) {
 
 		std::vector<Fish>& shole = sholes_in[i].get();
-
 		glm::vec3 color = sholes_in[i].color;
+
+		glUniform1i(glGetUniformLocation(fishShader.ID, "big"), sholes_in[i].preadator);
+		glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"), color.x, color.y, color.z);
+
 
 		for (int j = 0; j < shole.size(); j++) {
 
@@ -149,7 +152,6 @@ void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, std::vector<Shoa
 
 			//printf("pyPos <%f, %f, %f>\n", pyPos.x, pyPos.y, pyPos.z);
 
-			glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"), color.x, color.y, color.z);
  			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			glUniform1i(glGetUniformLocation(fishShader.ID, "fishId"), fish.id);
 
@@ -168,11 +170,7 @@ void draw_demo_fish(Mesh fishMesh, Shader fishShader, Camera camera, float debug
 	glm::mat4 model = glm::mat4(1.f);
 	glm::vec3 pyPos = glm::vec3(0.0, -5, 0.0);
 
-
-
 	model = glm::translate(model, pyPos);
-
-
 
 	glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"), 1.0f, 1.0f, 1.0f);
 	glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -366,6 +364,13 @@ int main()
 
 		sholes.push_back(shoal);
 	}
+
+	//Fish predator = Fish();
+	Shoal predators = Shoal(glm::vec3(1.0, 1.0, 1.0));
+	predators.preadator = true;
+	predators.add(Fish());
+
+	sholes.push_back(predators);
 
 
 	for (int i = 0; i < 500; i++) {

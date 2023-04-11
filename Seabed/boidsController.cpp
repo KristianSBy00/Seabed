@@ -138,8 +138,8 @@ void BoidsController::keepWithinBounds(int school_id, int id, Fish fish_list[][N
 
 
 void BoidsController::keepWithinBounds(Fish& fish) {
-	double margin = 3;
-	double turnFactor = 0.0100;
+	double margin = 5;
+	double turnFactor = 0.0200;
 
 	if (fish.x < -30 + margin ) {
 		fish.d_x += turnFactor;
@@ -521,6 +521,59 @@ void BoidsController::limitSpeed(Fish& fish) {
 	}
 }
 
+void BoidsController::avoidPredator(Fish& fish, std::vector<Shoal>& preadtors) {
+	double minDistance = 10; // The distance to stay away from other boids
+	//double minDistance = separation;
+
+	double avoidFactor = 0.02; // Adjust velocity by this %
+	double moveX = 0;
+	double moveY = 0;
+	double moveZ = 0;
+
+	for (int i = 0; i < preadtors.size(); i++) {
+		for (int j = 0; j < preadtors[i].get().size(); j++) {
+			Fish aFish = preadtors[i].get()[j];
+			double dist = distance(fish, aFish);
+
+			if (dist != 0 && dist < minDistance) {
+				moveX += (fish.x - aFish.x) / (dist + 0.4);
+				moveY += (fish.y - aFish.y) / (dist + 0.4);
+				moveZ += (fish.z - aFish.z) / (dist + 0.4);
+			}
+		}
+		fish.d_x += moveX * avoidFactor;
+		fish.d_y += moveY * avoidFactor;
+		fish.d_z += moveZ * avoidFactor;
+	}
+}
+
+void BoidsController::followPreay(Fish& predator, std::vector<Shoal>& pray) {
+
+	double moveX = 0;
+	double moveY = 0;
+	double moveZ = 0;
+
+	double followFactor = 0.2;
+
+	Fish closest = pray[0].get()[0];
+	double closestDist = distance(predator, pray[0].get()[0]);
+
+	for (int i = 0; i < pray.size(); i++) {
+		for (int j = 0; j < pray[i].get().size(); j++) {
+			Fish aFish = pray[i].get()[j];
+			double dist = distance(predator, aFish);
+			
+			moveX += (aFish.x - predator.x) / (dist * dist * dist * dist);
+			moveY += (aFish.y - predator.y) / (dist * dist * dist * dist);
+			moveZ += (aFish.z - predator.z) / (dist * dist * dist * dist);
+		}
+	}
+	predator.d_x += moveX * followFactor;
+	predator.d_y += moveY * followFactor;
+	predator.d_z += moveZ * followFactor;
+
+}
+
 void BoidsController::update(int numBoids, Fish fish_list[][NUMBER_FISH]) {
 	// Update each boid
 	double currentStrength = 0.00025;
@@ -547,6 +600,18 @@ void BoidsController::update(std::vector<Shoal>& sholes) {
 	// Update each boid
 	std::vector<bound> shole_bounds = std::vector<bound>();
 
+	std::vector<Shoal> preadtors = std::vector<Shoal>();
+	std::vector<Shoal> pray = std::vector<Shoal>();
+
+	for (int i = 0; i < sholes.size(); i++) {
+		if (sholes[i].preadator) {
+			preadtors.push_back(sholes[i]);
+		}
+		else {
+			pray.push_back(sholes[i]);
+		}
+	}
+
 
 	for (int i = 0; i < sholes.size(); i++) {
 
@@ -556,13 +621,22 @@ void BoidsController::update(std::vector<Shoal>& sholes) {
 			// Update the velocities according to each rule
 			Fish& fish = shole[j];
 
-			flyTowardsCenter(fish, sholes[i]);
-			avoidOthers(fish, sholes);
-			matchVelocity(fish, sholes[i]);
-			fightCurrent(fish);
-			limitSpeed(fish);
-			keepWithinBounds(fish);
-			avoidObsticle(fish);
+			if (!sholes[i].preadator) {
+				flyTowardsCenter(fish, sholes[i]);
+				avoidOthers(fish, sholes);
+				matchVelocity(fish, sholes[i]);
+				fightCurrent(fish);
+				limitSpeed(fish);
+				avoidPredator(fish, preadtors);
+				keepWithinBounds(fish);
+				//avoidObsticle(fish);
+			}
+			else {
+				avoidOthers(fish, pray);
+				followPreay(fish, pray);
+				limitSpeed(fish);
+				keepWithinBounds(fish);
+			}
 
 			// Update the position based on the current velocity
 			double a_x = fish.ddx - fish.d_x;
@@ -577,8 +651,12 @@ void BoidsController::update(std::vector<Shoal>& sholes) {
 			fish.y += fish.d_y;
 			fish.z += fish.d_z - currentStrength;
 
-
-			fish.swimCycle += sqrt(fish.d_x * fish.d_x + fish.d_y * fish.d_y + fish.d_z * fish.d_z) * 5;
+			if (!sholes[i].preadator) {
+				fish.swimCycle += sqrt(fish.d_x * fish.d_x + fish.d_y * fish.d_y + fish.d_z * fish.d_z) * 5;
+			}
+			else{
+				fish.swimCycle += sqrt(fish.d_x * fish.d_x + fish.d_y * fish.d_y + fish.d_z * fish.d_z) * 2;
+			}
 		}
 
 		sholes[i].calcBound();
@@ -643,6 +721,7 @@ void BoidsController::addObsticle(glm::vec3 obsticle) {
 
 	printf("added: <%f, %f, %f>\n", obsticle.x, obsticle.y, obsticle.z);
 }
+
 
 void BoidsController::calcBound() {
 	double max_x = obsticles[0].x;

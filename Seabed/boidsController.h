@@ -40,6 +40,9 @@ public:
 	void limitSpeed(int school_id, int id, int numBoids, Fish fish_list[][NUMBER_FISH]);
 	void limitSpeed(Fish& the_fish);
 
+	void avoidPredator(Fish& fish, std::vector<Shoal>& preadtors);
+	void followPreay(Fish& predator, std::vector<Shoal>& pray);
+
 	void update(int numBoids, Fish fish_list[][NUMBER_FISH]);
 	void update(std::vector<Shoal>& sholes);
 

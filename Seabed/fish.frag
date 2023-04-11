@@ -15,8 +15,9 @@ uniform sampler2D caustics;
 uniform vec3 camPos;
 uniform vec3 fishColor;
 uniform float time;
-uniform vec3 fish[300];
+uniform vec3 fish[301];
 uniform int fishId;
+uniform int big;
 
 float bigShadowDist = -1;
 float modifier = 1;
@@ -48,7 +49,7 @@ void main()
 	if ( crntPos.z > maxZ) inCave = false;
 	if ( crntPos.z < minZ) inCave = false;
 
-	for(int i = 0; i < 300; i++){
+	for(int i = 0; i < 301; i++){
 		
 		if(i == fishId){
 			continue;
@@ -56,7 +57,11 @@ void main()
 
 		vec3 fishPos = fish[i];
 
-		if (fishPos.y <= crntPos.y + 0.25){
+		float factor = 0.25;
+
+		if (big == 1) factor = 1; 
+
+		if (fishPos.y <= crntPos.y + factor){
 			continue;
 		}
 
