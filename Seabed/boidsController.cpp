@@ -9,7 +9,7 @@ BoidsController::BoidsController(double coherence, double separation, double ali
 	BoidsController::visualRange = visualRange;
 	BoidsController::obsticles = std::vector<glm::vec3>();
 	BoidsController::boundory = bound();
-	BoidsController::currentStrength = 0.005;
+	BoidsController::currentStrength = 10.500;
 }
 
 BoidsController::BoidsController() {
@@ -112,6 +112,11 @@ void BoidsController::fightCurrent(Fish& fish) {
 	fish.d_z += currentStrength/2;
 }
 
+
+void BoidsController::limitTurn(Fish& fish) {
+
+}
+
 void BoidsController::keepWithinBounds(int school_id, int id, Fish fish_list[][NUMBER_FISH]) {
 	int margin = 4;
 	double turnFactor = 0.025;
@@ -138,8 +143,8 @@ void BoidsController::keepWithinBounds(int school_id, int id, Fish fish_list[][N
 
 
 void BoidsController::keepWithinBounds(Fish& fish) {
-	double margin = 5;
-	double turnFactor = 0.0200;
+	double margin = 7.5;
+	double turnFactor = 0.0150;
 
 	if (fish.x < -30 + margin ) {
 		fish.d_x += turnFactor;
@@ -256,8 +261,8 @@ void BoidsController::flyTowardsCenter(Fish& the_fish, Shoal shoal) {
 
 // Move away from other boids that are too close to avoid colliding
 void BoidsController::avoidOthers(int school_id, int id, int numBoids, Fish fish_list[][NUMBER_FISH]) {
-	int minDistance = 2; // The distance to stay away from other boids
-	double avoidFactor = 0.0035; // Adjust velocity by this %
+	int minDistance = 1; // The distance to stay away from other boids
+	double avoidFactor = 0.0025; // Adjust velocity by this %
 	double moveX = 0;
 	double moveY = 0;
 	double moveZ = 0;
@@ -278,9 +283,11 @@ void BoidsController::avoidOthers(int school_id, int id, int numBoids, Fish fish
 	}
 }
 
-void BoidsController::avoidOthers(Fish& the_fish, std::vector <Shoal>& sholes) {
-	double minDistance = 2; // The distance to stay away from other boids
+void BoidsController::avoidOthers(Fish& the_fish, std::vector <Shoal>& sholes, bool big) {
+	double minDistance = 1; // The distance to stay away from other boids
 	//double minDistance = separation;
+
+	if (big)minDistance = 6;
 
 	double avoidFactor; // Adjust velocity by this %
 	double moveX = 0;
@@ -380,10 +387,10 @@ void BoidsController::matchVelocity(Fish& the_fish, Shoal shoal){
 	}
 }
 
-/*
+
 void BoidsController::avoidObsticle(Fish& the_fish) {
-	double minDistance = 1.5; // The distance to stay away from other boids
-	double avoidFactor = 0.0025; // Adjust velocity by this %
+	double minDistance = 2; // The distance to stay away from other boids
+	double avoidFactor = 0.015; // Adjust velocity by this %
 	double moveX = 0;
 	double moveY = 0;
 	double moveZ = 0;
@@ -401,9 +408,9 @@ void BoidsController::avoidObsticle(Fish& the_fish) {
 		double dist = distance(the_fish, obsticles[i]);
 
 		if (dist != 0 && dist < minDistance) {
-			moveX += (the_fish.x - obsticles[i].x) / dist;
-			moveY += (the_fish.y - obsticles[i].y) / dist;
-			moveZ += (the_fish.z - obsticles[i].z) / dist;
+			moveX += (the_fish.x - obsticles[i].x) / pow(dist, 1);
+			moveY += (the_fish.y - obsticles[i].y) / pow(dist, 1);
+			moveZ += (the_fish.z - obsticles[i].z) / pow(dist, 1);
 		}
 	}
 
@@ -411,7 +418,35 @@ void BoidsController::avoidObsticle(Fish& the_fish) {
 	the_fish.d_y += moveY * avoidFactor;
 	the_fish.d_z += moveZ * avoidFactor;
 }
+
+
+/*
+void BoidsController::avoidObsticle(Fish& the_fish) {
+	double margin = 7.5;
+	double turnFactor = 0.0150;
+
+	if (the_fish.x >= boundory.min_x + margin) {
+		the_fish.d_x += turnFactor;
+	}
+	if (the_fish.x > 30 - margin) {
+		the_fish.d_x -= turnFactor;
+	}
+	if (the_fish.y < 0.0 + margin) { //HARD SURFICE
+		the_fish.d_y += turnFactor;
+	}
+	if (the_fish.y > 25 - margin) {
+		the_fish.d_y -= turnFactor;
+	}
+	if (the_fish.z < -30 + margin) {
+		the_fish.d_z += turnFactor;
+	}
+	if (the_fish.z > 30 - margin) {
+		the_fish.d_z -= turnFactor;
+	}
+}
 */
+
+/*
 
 void BoidsController::avoidObsticle(Fish& the_fish) {
 
@@ -451,7 +486,6 @@ void BoidsController::avoidObsticle(Fish& the_fish) {
 	the_fish.d_y = orginalY;
 
 	the_fish.d_z = the_fish.d_z - ensentive * the_fish.d_z;
-	*/
 
 	if (!inRock(the_fish)) return;
 
@@ -459,6 +493,8 @@ void BoidsController::avoidObsticle(Fish& the_fish) {
 	the_fish.d_y -= 0.5 * the_fish.d_y;
 	the_fish.d_z -= 0.5 * the_fish.d_z;
 }
+*/
+
 
 bool BoidsController::inRock(Fish& the_fish) {
 
@@ -525,7 +561,7 @@ void BoidsController::avoidPredator(Fish& fish, std::vector<Shoal>& preadtors) {
 	double minDistance = 10; // The distance to stay away from other boids
 	//double minDistance = separation;
 
-	double avoidFactor = 0.02; // Adjust velocity by this %
+	double avoidFactor = 0.05; // Adjust velocity by this %
 	double moveX = 0;
 	double moveY = 0;
 	double moveZ = 0;
@@ -536,9 +572,9 @@ void BoidsController::avoidPredator(Fish& fish, std::vector<Shoal>& preadtors) {
 			double dist = distance(fish, aFish);
 
 			if (dist != 0 && dist < minDistance) {
-				moveX += (fish.x - aFish.x) / (dist + 0.4);
-				moveY += (fish.y - aFish.y) / (dist + 0.4);
-				moveZ += (fish.z - aFish.z) / (dist + 0.4);
+				moveX += (fish.x - aFish.x) / (pow(dist, 2) + 0.5);
+				moveY += (fish.y - aFish.y) / (pow(dist, 2) + 0.5);
+				moveZ += (fish.z - aFish.z) / (pow(dist, 2) + 0.5);
 			}
 		}
 		fish.d_x += moveX * avoidFactor;
@@ -563,9 +599,9 @@ void BoidsController::followPreay(Fish& predator, std::vector<Shoal>& pray) {
 			Fish aFish = pray[i].get()[j];
 			double dist = distance(predator, aFish);
 			
-			moveX += (aFish.x - predator.x) / (dist * dist * dist * dist);
-			moveY += (aFish.y - predator.y) / (dist * dist * dist * dist);
-			moveZ += (aFish.z - predator.z) / (dist * dist * dist * dist);
+			moveX += (aFish.x - predator.x) / ((pow(dist, 5)) + 0.4);
+			moveY += (aFish.y - predator.y) / ((pow(dist, 5)) + 0.4);
+			moveZ += (aFish.z - predator.z) / ((pow(dist, 5)) + 0.4);
 		}
 	}
 	predator.d_x += moveX * followFactor;
@@ -623,19 +659,23 @@ void BoidsController::update(std::vector<Shoal>& sholes) {
 
 			if (!sholes[i].preadator) {
 				flyTowardsCenter(fish, sholes[i]);
-				avoidOthers(fish, sholes);
+				avoidOthers(fish, sholes, false);
 				matchVelocity(fish, sholes[i]);
 				fightCurrent(fish);
 				limitSpeed(fish);
 				avoidPredator(fish, preadtors);
 				keepWithinBounds(fish);
-				//avoidObsticle(fish);
+				avoidObsticle(fish);
 			}
 			else {
-				avoidOthers(fish, pray);
+				flyTowardsCenter(fish, sholes[i]);
+				avoidOthers(fish, preadtors, true);
+				matchVelocity(fish, sholes[i]);
 				followPreay(fish, pray);
+				fightCurrent(fish);
 				limitSpeed(fish);
 				keepWithinBounds(fish);
+				avoidObsticle(fish);
 			}
 
 			// Update the position based on the current velocity
@@ -647,16 +687,17 @@ void BoidsController::update(std::vector<Shoal>& sholes) {
 			fish.ddy = fish.d_y;
 			fish.ddz = fish.d_z;
 
-			fish.x += fish.d_x - currentStrength;
-			fish.y += fish.d_y;
-			fish.z += fish.d_z - currentStrength;
+			double guy = 0.025;
 
-			if (!sholes[i].preadator) {
-				fish.swimCycle += sqrt(fish.d_x * fish.d_x + fish.d_y * fish.d_y + fish.d_z * fish.d_z) * 5;
-			}
-			else{
-				fish.swimCycle += sqrt(fish.d_x * fish.d_x + fish.d_y * fish.d_y + fish.d_z * fish.d_z) * 2;
-			}
+			fish.x += (fish.d_x - guy);
+			fish.y += fish.d_y;
+			fish.z += (fish.d_z - guy);
+
+			double swimFactor = fish.size / 2;
+
+			if (sholes[i].preadator) swimFactor = swimFactor * 2;
+			
+			fish.swimCycle += (0.05 + sqrt(fish.d_x * fish.d_x + fish.d_y * fish.d_y + fish.d_z * fish.d_z)) / swimFactor;
 		}
 
 		sholes[i].calcBound();

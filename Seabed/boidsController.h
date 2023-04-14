@@ -30,7 +30,7 @@ public:
 	void flyTowardsCenter(Fish& the_fish, Shoal shoal);
 
 	void avoidOthers(int school_id, int id, int numBoids, Fish fish_list[][NUMBER_FISH]);
-	void avoidOthers(Fish& the_fish, std::vector <Shoal>& sholes);
+	void avoidOthers(Fish& the_fish, std::vector <Shoal>& sholes, bool big);
 
 	void matchVelocity(int school_id, int id, int numBoids, Fish fish_list[][NUMBER_FISH]);
 	void matchVelocity(Fish& the_fish, Shoal shoal);
@@ -73,6 +73,8 @@ public:
 	bound getBound();
 
 	void fightCurrent(Fish& fish);
+
+	void limitTurn(Fish& fish);
 
 
 private:

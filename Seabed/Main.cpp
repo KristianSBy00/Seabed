@@ -131,9 +131,14 @@ void expandFloor(std::vector<Vertex>& base, std::vector<Vertex>& out) {
 
 void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, std::vector<Shoal>& sholes_in) {
 	glm::mat4 model;
-	//glm::vec3 pyPos;
-
 	int index = 0;
+
+	int numFish = 0;
+
+	for (int i = 0; i < sholes_in.size(); i++) {
+		numFish += sholes_in[i].get().size();
+	}
+	glUniform1i(glGetUniformLocation(fishShader.ID, "numFish"), numFish);
 
 	for (int i = 0; i < sholes_in.size(); i++) {
 
@@ -148,17 +153,17 @@ void draw_fish(Mesh fishMesh, Shader fishShader, Camera camera, std::vector<Shoa
 
 			Fish& fish = shole[j];
 			model = fish.get_model_mat();
-			//glm::vec3 pyPos = fish.get_position_vec();
 
-			//printf("pyPos <%f, %f, %f>\n", pyPos.x, pyPos.y, pyPos.z);
+			double size = fish.size;
+			if (sholes_in[i].preadator) size = size * 4;
+			glUniform1f(glGetUniformLocation(fishShader.ID, "size"), size);
+
 
  			glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			glUniform1i(glGetUniformLocation(fishShader.ID, "fishId"), fish.id);
 
 			//"Animation"
 			glUniform1f(glGetUniformLocation(fishShader.ID, "swimCycle"), fish.swimCycle);
-			//glUniform3f(glGetUniformLocation(fishShader.ID, "pyPos"), pyPos.x, pyPos.y, pyPos.z);
-
 			fishMesh.Draw(fishShader, camera);
 			index++;
 		}
@@ -171,7 +176,7 @@ void draw_demo_fish(Mesh fishMesh, Shader fishShader, Camera camera, float debug
 	glm::vec3 pyPos = glm::vec3(0.0, -5, 0.0);
 
 	model = glm::translate(model, pyPos);
-
+	glUniform1i(glGetUniformLocation(fishShader.ID, "numFish"), 0);
 	glUniform3f(glGetUniformLocation(fishShader.ID, "fishColor"), 1.0f, 1.0f, 1.0f);
 	glUniformMatrix4fv(glGetUniformLocation(fishShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glUniform1i(glGetUniformLocation(fishShader.ID, "fishId"), 1);
@@ -197,8 +202,6 @@ void drawKelp(Mesh kelpMesh, Shader kelpShader, Camera camera, std::vector<Kelp>
 		//print_mat4(rot_z);
 		//printf("\n\n");
 		//printf("\n\n");
-
-	
 
 		glm::mat4 currentRot = glm::rotate((float)sin(glm::radians(kelpIn[i].cycle * 8)) / 8 + 1.f/2, glm::vec3(-1, 0, 1));
 
@@ -297,19 +300,41 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 void fishToShader(Shader shader) {
+
+	int numFish = 0;
+
+	for (int i = 0; i < sholes.size(); i++) {
+		numFish += sholes[i].get().size();
+	}
+	glUniform1i(glGetUniformLocation(shader.ID, "numFish"), numFish);
+
 	for (int i = 0; i < sholes.size(); i++) {
 
 		Shoal shoal = sholes[i];
 
 		for (int j = 0; j < sholes[i].get().size(); j++) {
 
-			string location = "fish[" + std::to_string(sholes[i].get()[j].id) + "]";
+			Fish fish = sholes[i].get()[j];
 
-			double x = sholes[i].get()[j].x;
-			double y = sholes[i].get()[j].y;
-			double z = sholes[i].get()[j].z;
+			string posSize = "fish[" + std::to_string(fish.id) + "].size";
+			string posLocation = "fish[" + std::to_string(fish.id) + "].position";
+			string posDirection = "fish[" + std::to_string(fish.id) + "].direction";
 
-			glUniform3f(glGetUniformLocation(shader.ID, location.data()), x, y, z);
+			double size = fish.size;
+
+			if (shoal.preadator) size = size * 4; //preadtors are 4 times larger
+
+			double x = fish.x;
+			double y = fish.y;
+			double z = fish.z;
+
+			double d_x = fish.d_x;
+			double d_y = fish.d_y;
+			double d_z = fish.d_z;
+
+			glUniform1f(glGetUniformLocation(shader.ID, posSize.data()), size);
+			glUniform3f(glGetUniformLocation(shader.ID, posLocation.data()), x, y, z);
+			//glUniform3f(glGetUniformLocation(shader.ID, posDirection.data()), d_x, d_y, d_z);
 		}
 	}
 }
@@ -338,7 +363,7 @@ int main()
 	std::vector <GLuint> floorIndices(indices_floor, indices_floor + sizeof(indices_floor) / sizeof(GLuint));
 
 	loadOBJ("models/fish.obj", fishVertices, fishIndices);
-	loadOBJ("models/cave.obj", rockVertices, rockIndices);
+	loadOBJ("models/bigrock.obj", rockVertices, rockIndices);
 	loadOBJ("models/kelp.obj", kelpVertices, kelpIndices);
 	loadOBJ("models/theBox.obj", boxVertices, boxIndices);
 	loadOBJ("models/golf.obj", sunVertices, sunIndices);
@@ -368,6 +393,9 @@ int main()
 	//Fish predator = Fish();
 	Shoal predators = Shoal(glm::vec3(1.0, 1.0, 1.0));
 	predators.preadator = true;
+	//predators.separation = 0.050;
+	predators.add(Fish());
+	predators.add(Fish());
 	predators.add(Fish());
 
 	sholes.push_back(predators);
@@ -646,7 +674,7 @@ int main()
 			waterSurface.uppdate_caustics();
 			box.uppdate_caustics();
 
-			debugFishCycle += 0.3;
+			debugFishCycle += 0.2;
 
 		}
 

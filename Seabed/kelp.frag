@@ -1,6 +1,12 @@
-#version 330 core
-
+#version 430 core
+#define MAX_FISH 500
 // Outputs colors in RGBA
+struct Fish {
+    float size;
+    vec3 position;
+};
+
+
 out vec4 FragColor;
 
 in vec3 crntPos;
@@ -13,28 +19,24 @@ uniform sampler2D caustics;
 uniform vec3 camPos;
 
 uniform float time;
-uniform vec3 fish[300];
+
+uniform int numFish;
+uniform Fish fish[MAX_FISH];
 
 float modifier = 1;
 
-void main()
-{
-
-
+void main(){
 	bool shadow = false;
 
-	for(int i = 0; i < 300; i++){
-		vec3 fishPos = fish[i];
+	for(int i = 0; i < numFish; i++){
+		vec3 fishPos = fish[i].position;
 
-		if (fishPos.y <= crntPos.y){
-			continue;
-		};
+		if (fishPos.y <= crntPos.y) continue;
 
 		float fishDist = distance(fishPos.xz, crntPos.xz);
 
 		if ( fishDist < 0.5f ){
 			modifier = modifier * (fishDist + 0.5);
-
 			shadow = true;
 		}
 	}

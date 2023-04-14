@@ -19,8 +19,8 @@ void Camera::updateMatrix(float FOVdeg, float nearPlane, float farPlane)
 	// Makes camera look in the right direction from the right position
 
 	if (fishCam) {
-		glm::vec3 fishPosition = glm::vec3(fish->x, fish->y, fish->z + 0.75);
-		view = glm::lookAt(fishPosition, fishPosition + Orientation, Up);
+		glm::vec3 fishPosition = glm::vec3(fish->x, fish->y, fish->z);
+		view = glm::lookAt(fishPosition, fishPosition + fishOrientation, Up);
 	}
 	else {
 		view = glm::lookAt(Position, Position + Orientation, Up);
@@ -100,7 +100,7 @@ void Camera::Inputs(GLFWwindow* window){
 
 
 	// Handles mouse inputs
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS || fishCam)
 	{
 		// Hides mouse cursor
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -123,6 +123,7 @@ void Camera::Inputs(GLFWwindow* window){
 		float rotX = sensitivity * (float)(mouseY - (height / 2)) / height;
 		float rotY = sensitivity * (float)(mouseX - (width / 2)) / width;
 
+
 		// Calculates upcoming vertical change in the Orientation
 
 		newOrientation = glm::rotate(Orientation, glm::radians(-rotX), glm::normalize(glm::cross(Orientation, Up)));
@@ -135,10 +136,14 @@ void Camera::Inputs(GLFWwindow* window){
 
 		Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
 
-		// Rotates the Orientation left and right
-		//Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
+		if (fishCam) {
+			rotX = fish->getRotX();
+			rotY = fish->getRotY();
+			fishOrientation = glm::vec3(1.f, 1.f, -1.0);
+			fishOrientation = glm::rotate(fishOrientation, rotX,  glm::normalize(glm::cross(fishOrientation, Up)));
+			fishOrientation = glm::rotate(fishOrientation,  rotY, glm::normalize(glm::cross(fishOrientation, Up)));
+		}
 
-		// Sets mouse cursor to the middle of the screen so that it doesn't end up roaming around
 		glfwSetCursorPos(window, (width / 2), (height / 2));
 	}
 	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)

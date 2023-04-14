@@ -14,6 +14,7 @@ uniform mat4 camMatrix;
 uniform mat4 model;
 uniform float swimCycle;
 uniform int big;
+uniform float size;
 
 mat4 rotx(float ang){
 	return mat4(
@@ -56,14 +57,15 @@ void main()
 {
 	texCoord = aTex;
 
-	vec3 scaledPos = aPos * 0.25;
+	vec3 scaledPos = aPos * 0.25 * size;
+	scaledPos.z = scaledPos.z * 0.65;
 
-	mat4 swRotZ = roty( scaledPos.z *			cos(radians(swimCycle * 64	+ scaledPos.z * 180  )	) / 8);
-	mat4 swRotX = rotx( (scaledPos.z/16 + 2) *	cos(radians(swimCycle * 32)							) / 32);
-	mat4 swRotY = rotz( (scaledPos.y - 0.5)  *	cos(radians(swimCycle * 64	+ (scaledPos.y - 0.5) * 180)) / 2);
-	mat4 swTran = traslate(vec3( sin(radians(swimCycle*16)) / 16 , cos(radians(swimCycle*16)) / 16, sin(radians(swimCycle*16 + 180) / 64)));
+	vec3 stupid = aPos * 0.25;
 
-	if(big == 1) scaledPos = aPos;
+	mat4 swRotZ = roty(  stupid.z *			cos(radians(swimCycle * 64	+ stupid.z * 180  )	) / 6);
+	mat4 swRotX = rotx( (stupid.z/16 + 2) *	cos(radians(swimCycle * 32)							) / 32);
+	mat4 swRotY = rotz( (stupid.y*3 - 0.5)  *	cos(radians(swimCycle * 64	+ (stupid.y * 3 - 0.5) * 180))/2);
+	mat4 swTran = traslate(vec3( sin(radians(swimCycle*16)) / 16 , cos(radians(swimCycle*16 + 180)) / 16, sin(radians(swimCycle*16 + 180) / 64)));
 
 	crntPos = vec3(model * swTran * swRotX * swRotY * swRotZ * vec4(scaledPos, 1.0f));
 

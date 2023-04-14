@@ -1,4 +1,11 @@
-#version 330 core
+#version 430 core
+
+#define MAX_FISH 500
+
+struct Fish {
+    float size;
+    vec3 position;
+};
 
 // Outputs colors in RGBA
 out vec4 FragColor;
@@ -12,10 +19,12 @@ uniform sampler2D specular0;
 uniform sampler2D normal0;
 uniform sampler2D dissortion0;
 uniform sampler2D caustics;
+
 uniform vec3 camPos;
 uniform vec3 fishColor;
 uniform float time;
-uniform vec3 fish[301];
+uniform int numFish;
+uniform Fish fish[MAX_FISH];
 uniform int fishId;
 uniform int big;
 
@@ -49,13 +58,13 @@ void main()
 	if ( crntPos.z > maxZ) inCave = false;
 	if ( crntPos.z < minZ) inCave = false;
 
-	for(int i = 0; i < 301; i++){
+	for(int i = 0; i < numFish; i++){
 		
 		if(i == fishId){
 			continue;
 		}
 
-		vec3 fishPos = fish[i];
+		vec3 fishPos = fish[i].position;
 
 		float factor = 0.25;
 

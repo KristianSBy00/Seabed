@@ -16,6 +16,11 @@ public:
 	double d_z;
 
 
+	double last_d_x;
+	double last_d_y;
+	double last_d_z;
+
+
 	double ddx;
 	double ddy;
 	double ddz;
@@ -25,6 +30,8 @@ public:
 	double rot_z;
 
 	double swimCycle;
+
+	double size;
 
 	Fish();
 	Fish(double rot_x, double rot_y, double rot_z);
@@ -41,5 +48,7 @@ public:
 	float getRotX();
 	float getRotY();
 	float getRotZ();
+
+	double fRand(double fMin, double fMax);
 };
 #endif

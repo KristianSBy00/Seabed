@@ -78,19 +78,21 @@ void main()
 	vec3 scaledPos = aPos * size;
 	scaledPos.y = scaledPos.y * lenght;
 
-	mat4 rotZ = rot_z * aPos.x * aPos.y;
-	mat4 rotX = rot_x * aPos.z * aPos.y;
-	mat4 rotY = rot_y * aPos.y * aPos.x;
+	//mat4 rotZ = rot_z * aPos.x * aPos.y;
+	//mat4 rotX = rot_x * aPos.z * aPos.y;
+	//mat4 rotY = rot_y * aPos.y * aPos.x;
 
-	float newGuy = cycle;
+	//glm::mat4 rot_x = glm::rotate((float)sin(glm::radians(kelpIn[i].cycle * 8)) / 8, glm::vec3(1, 0, 0));
+	//glm::mat4 rot_y = glm::rotate((float)cos(glm::radians(kelpIn[i].cycle * 4)) / 4, glm::vec3(0, 1, 0));
+	//glm::mat4 rot_z = glm::rotate((float)cos(glm::radians(kelpIn[i].cycle * 8)) / 8, glm::vec3(0, 0, 1));
 
-	//mat4 rot_X = rotx(sin(radians(newGuy)) / 8);
-	//mat4 rot_Y = roty(cos(radians(cycle * 90 )));
-	//mat4 rot_Z = rotz(cos(radians(newGuy)) / 8);
+	mat4 rot_X = rotx(sin(radians(cycle * 8)) / 8);
+	mat4 rot_Y = roty(cos(radians(cycle * 4 )) / 4);
+	mat4 rot_Z = rotz(cos(radians(cycle * 8)) / 8);
 
-	//mat4 rotX = rot_X;
-	//mat4 rotY = rot_Y;
-	//mat4 rotZ = rot_Z;
+	mat4 rotX = rot_X;
+	mat4 rotY = rot_Y;
+	mat4 rotZ = rot_Z;
 
 	//mat4 rotZ = aPos.x * aPos.y * rotx();
 	//mat4 rotX = rot_x * aPos.z * aPos.y;

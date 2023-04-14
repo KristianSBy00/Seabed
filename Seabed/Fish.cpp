@@ -23,6 +23,8 @@ Fish::Fish() {
 	Fish::rot_x = 0;
 	Fish::rot_y = 0;
 	Fish::rot_z = 0;
+
+	Fish::size = fRand(0.75, 1.25);
 }
 
 Fish::Fish(double rot_x, double rot_y, double rot_z) {
@@ -39,6 +41,11 @@ Fish::Fish(double rot_x, double rot_y, double rot_z) {
 	Fish::rot_x = rot_x;
 	Fish::rot_y = rot_y;
 	Fish::rot_z = rot_z;
+}
+
+double Fish::fRand(double fMin, double fMax) {
+	double f = (double)rand() / RAND_MAX;
+	return fMin + f * (fMax - fMin);
 }
 
 double Fish::CalcHeadingRad() {
@@ -91,9 +98,6 @@ float Fish::getRotZ() {
 
 
 glm::mat4 Fish::get_rotation_mat() {
-	//double hor_angle = CalcHeadingRad();
-	//double pitch = CalcPitchRad();
-
 	glm::mat4 rot_mat_x = glm::rotate(getRotX(), glm::vec3(1.0, 0.0, 0.0));
 	glm::mat4 rot_mat_y = glm::rotate(getRotY(), glm::vec3(0.0, 1.0, 0.0));
 	glm::mat4 rot_mat_z = glm::rotate(getRotZ(), glm::vec3(0.0, 0.0, 1.0));
@@ -109,13 +113,6 @@ glm::mat4 Fish::get_model_mat() {
 	glm::mat4 out = glm::mat4(1.0f);
 	out = glm::translate(out, pos);
 	return out * get_rotation_mat();
-
-	//return get_translation_mat() * get_rotation_mat();
-
-	//return glm::rotate(get_rotation_mat(), pos);
-
-
-	//return ident * get_translation_mat() * get_rotation_mat();
 }
 
 glm::vec3 Fish::get_rot_vec() {
@@ -123,7 +120,6 @@ glm::vec3 Fish::get_rot_vec() {
 	double pitch = CalcPitchRad();
 
 	return glm::vec3(float(rot_x), float(hor_angle + rot_y), float(-pitch + rot_z));
-
 }
 
 glm::vec3 Fish::get_position_vec() {
