@@ -193,26 +193,16 @@ void print_mat4(glm::mat4 mat) {
 
 void drawKelp(Mesh kelpMesh, Shader kelpShader, Camera camera, std::vector<Kelp>& kelpIn, float time) {
 	for (int i = 0; i < kelpIn.size(); i++) {
-		glm::mat4 rot_x = glm::rotate((float)sin(glm::radians(kelpIn[i].cycle * 8)) / 8, glm::vec3(1, 0, 0));
-		glm::mat4 rot_y = glm::rotate((float)cos(glm::radians(kelpIn[i].cycle * 4)) / 4, glm::vec3(0, 1, 0));
-		glm::mat4 rot_z = glm::rotate((float)cos(glm::radians(kelpIn[i].cycle * 8)) / 8, glm::vec3(0, 0, 1));
-
 		//print_mat4(rot_x);
 		//print_mat4(rot_y);
 		//print_mat4(rot_z);
 		//printf("\n\n");
 		//printf("\n\n");
 
-		glm::mat4 currentRot = glm::rotate((float)sin(glm::radians(kelpIn[i].cycle * 8)) / 8 + 1.f/2, glm::vec3(-1, 0, 1));
-
-		glUniformMatrix4fv(glGetUniformLocation(kelpShader.ID, "rot_x"), 1, GL_FALSE, glm::value_ptr(rot_x));
-		glUniformMatrix4fv(glGetUniformLocation(kelpShader.ID, "rot_y"), 1, GL_FALSE, glm::value_ptr(rot_y));
-		glUniformMatrix4fv(glGetUniformLocation(kelpShader.ID, "rot_z"), 1, GL_FALSE, glm::value_ptr(rot_z));
+		glm::mat4 currentRot = glm::rotate((float)sin(glm::radians(kelpIn[i].cycle * 6)) / 16 + 2.f/3, glm::vec3(-1, 0, 1));
 		glUniformMatrix4fv(glGetUniformLocation(kelpShader.ID, "currentRot"), 1, GL_FALSE, glm::value_ptr(currentRot));
 
 		glm::mat4 baseRot = glm::rotate( (float) kelpIn[i].rotation, glm::vec3(0, 1, 0) );
-		//float size		= kelpIn[i].size;
-		//float lenght	= kelpIn[i].lenght;
 
 		glm::mat4 translation = glm::translate(kelpIn[i].pos);
 

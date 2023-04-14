@@ -199,8 +199,8 @@
     <LibraryPath>C:\Users\Kristian\source\repos\Seabed\Libraries\lib;C:\Users\Kristian\source\repos\Seabed\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Kristian\source\repos\Seabed\Libraries\include;C:\Users\krist\source\repos\KristianSBy00\Seabed\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Kristian\source\repos\Seabed\Libraries\lib;C:\Users\krist\source\repos\KristianSBy00\Seabed\Libraries\lib;C:\Users\krist\source\repos\Seabed\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\krist\source\repos\Seabed\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\krist\source\repos\Seabed\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

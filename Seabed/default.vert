@@ -12,7 +12,6 @@ out vec2 texCoord;
 
 uniform mat4 camMatrix;
 uniform mat4 model;
-uniform float texRep;
 
 void main(){
 	crntPos = vec3(model * vec4(aPos, 1.0f));
