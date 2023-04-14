@@ -577,7 +577,7 @@ int main()
 	Mesh rock = Mesh(rockVertices, rockIndices, rockTex, castics, emptTex);
 	Mesh fish = Mesh(fishVertices, fishIndices, fish_tex, castics, emptTex);
 	Mesh kelp = Mesh(kelpVertices, kelpIndices, kelpTex, castics, emptTex);
-	Mesh sun = Mesh(sunVertices, sunIndices, floorTex, emptTex, emptTex);
+	Mesh sun = Mesh(sunVertices, sunIndices, floorTex, castics, emptTex);
 	Mesh box  = Mesh(wallVertices, wallIndices, floorTex, castics, emptTex);
 
 
@@ -691,24 +691,24 @@ int main()
 		sun.Draw(sunShader, camera);
 
 		kelpShader.Activate();
-		fishToShader(kelpShader);
+		//fishToShader(kelpShader);
 		drawKelp(kelp, kelpShader, camera, theKelp, glfwGetTime());
 
 		rockShader.Activate();
-		fishToShader(rockShader);
+		//fishToShader(rockShader);
 		glUniform1f(glGetUniformLocation(rockShader.ID, "time"), glfwGetTime());
 		rock.Draw(rockShader, camera);
 
 		floorShader.Activate();
 		glUniform1f(glGetUniformLocation(floorShader.ID, "time"), glfwGetTime());
-		fishToShader(floorShader);
+		//fishToShader(floorShader);
 		floor.Draw(floorShader, camera);
 
-		fishShader.Activate();
-		fishToShader(kelpShader);
-		glUniform1f(glGetUniformLocation(fishShader.ID, "time"), glfwGetTime());
-		draw_fish(fish, fishShader, camera, sholes);
-		draw_demo_fish(fish, fishShader, camera, debugFishCycle);
+		//fishShader.Activate();
+		//fishToShader(kelpShader);
+		//glUniform1f(glGetUniformLocation(fishShader.ID, "time"), glfwGetTime());
+		//draw_fish(fish, fishShader, camera, sholes);
+		//draw_demo_fish(fish, fishShader, camera, debugFishCycle);
 
 		waterSurfaceShader.Activate();
 		glUniform1f(glGetUniformLocation(waterSurfaceShader.ID, "time"), glfwGetTime());
